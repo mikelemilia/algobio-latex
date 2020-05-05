@@ -9,8 +9,12 @@
 % Packages -------------------------------------------------------
 \usepackage[left=2cm, right=2cm, top=2cm]{geometry}
 \usepackage{subfiles}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{hyperref}
 \usepackage[dvipsnames]{xcolor}
+\usepackage{amsthm} % used for definition/theorem/proof/corollary/lemma
 
 \usepackage{apacite}
 \bibliographystyle{apacite}
@@ -18,6 +22,9 @@
 \makeatletter
 \patchcmd{\nocite}{\ifx\@onlypreamble\document}{\iftrue}{}{}
 \makeatother
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definizione}[section]
 
 \title{Detection Mutation/SNP Mapping-free}
 \author{Barisan Anna, Milia Mikele}
