@@ -7,18 +7,6 @@
 
 \begin{document}
 
-\section{Reference Free Frameworks}
-\begin{flushleft}
-\textbf{Migliorare e ampliare introduzione sui refence free frameworks.}
-\linebreak
-\end{flushleft}
-I metodi reference-based sopracitati, non possono essere applicati quando non è presente un genoma di riferimento. 
-In generale, i metodi reference-free specializzati nell’individuare SNP possono essere divisi in due macro categorie: 
-\begin{itemize} 
-\item i metodi della prima categoria eseguono inizialmente un assemblaggio de novo (de novo assembly) per costruire una sequenza di riferimento. Successivamente tramite un sotto-modulo (subroutine) reference based per mappare le letture (reads) di ogni individuo su questa nuova sequenza di riferimento. Ci si riferisce a questi metodi come ibridi (hybrid) siccome utilizzano sia assemblaggio de novo sia tecniche di mappatura (mapping techniques) per individuare SNP.
-\item i metodi della seconda categoria si concentrano direttamente sull’assemblaggio degli SNP, senza cercare di assemblare preventivamente un riferimento completo (full reference)
-\end{itemize}
-
 \subsection{DiscoSnp\texttt{++}}
 \paragraph{}
 DiscoSnp\texttt{++} \cite{peterlongo2017discosnp++} rientra nella categoria dei metodi \textit{de-novo}, ed è stato presentato come la nuova versione di DiscoSnp \cite{uricaru2015reference}. Reimplementato da zero usando la libreria GATB \cite{drezen2014gatb} permette di ottenere un tempo di esecuzione più veloce ed un minor consumo di memoria rispetto alla sua precedente versione. È stato progettato per individuare e classificare tutte le tipologie di SNP, compresi piccoli indel provenienti direttamente dalle reads sequenziate (FastQ\footnote{FastQ :  formato di puro testo in codice ASCII facilmente leggibile, pensato dal Wellcome Sanger Institute per associare ad una sequenza prodotta da una tecnologia HTS/NGS, la qualità di ogni sua singola base. È diventato lo standard de facto per la condivisione di dati \cite{cock2010sanger}) prodotti da processi di sequenziamento basati su tecnologia HTS. } o FASTA) senza utilizzare un genoma di riferimento.
