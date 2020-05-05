@@ -7,6 +7,10 @@
 \usepackage[left=2cm, right=2cm, top=2cm]{geometry}
 \usepackage{subfiles}
 \usepackage{apacite}
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\nocite}{\ifx\@onlypreamble\document}{\iftrue}{}{}
+\makeatother
 \usepackage[dvipsnames]{xcolor}
 
 \title{Detection Mutation/SNP Mapping-free}
@@ -20,10 +24,12 @@
 \tableofcontents
 
 %\subfile{chapters/introduzione.tex}
-%\subfile{chapters/vargeno.tex}
+\subfile{chapters/vargeno.tex}
 \subfile{chapters/discosnp.tex}
 
 \bibliographystyle{apacite}
 \bibliography{bibliography}
 
 \end{document}
+
+
