@@ -1,0 +1,43 @@
+% Overview:
+%   DiscoSNP++ TeX subfile for the project.
+%   Each subfile MUST start with the following line
+%		\documentclass[../main.tex]{subfiles}
+
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\section{Reference Free Frameworks}
+\begin{flushleft}
+\textbf{Migliorare e ampliare introduzione sui refence free frameworks.}
+\linebreak
+\end{flushleft}
+I metodi reference-based sopracitati, non possono essere applicati quando non è presente un genoma di riferimento. 
+In generale, i metodi reference-free specializzati nell’individuare SNP possono essere divisi in due macro categorie: 
+\begin{itemize} 
+\item i metodi della prima categoria eseguono inizialmente un assemblaggio de novo (de novo assembly) per costruire una sequenza di riferimento. Successivamente tramite un sotto-modulo (subroutine) reference based per mappare le letture (reads) di ogni individuo su questa nuova sequenza di riferimento. Ci si riferisce a questi metodi come ibridi (hybrid) siccome utilizzano sia assemblaggio de novo sia tecniche di mappatura (mapping techniques) per individuare SNP.
+\item i metodi della seconda categoria si concentrano direttamente sull’assemblaggio degli SNP, senza cercare di assemblare preventivamente un riferimento completo (full reference)
+\end{itemize}
+
+\subsection{DiscoSnp\texttt{++}}
+\paragraph{}
+DiscoSnp\texttt{++} \cite{peterlongo2017discosnp++} rientra nella categoria dei metodi \textit{de-novo}, ed è stato presentato come la nuova versione di DiscoSnp \cite{uricaru2015reference}. Reimplementato da zero usando la libreria GATB \cite{drezen2014gatb} permette di ottenere un tempo di esecuzione più veloce ed un minor consumo di memoria rispetto alla sua precedente versione. È stato progettato per individuare e classificare tutte le tipologie di SNP, compresi piccoli indel provenienti direttamente dalle reads sequenziate (FastQ\footnote{FastQ :  formato di puro testo in codice ASCII facilmente leggibile, pensato dal Wellcome Sanger Institute per associare ad una sequenza prodotta da una tecnologia HTS/NGS, la qualità di ogni sua singola base. È diventato lo standard de facto per la condivisione di dati \cite{cock2010sanger}) prodotti da processi di sequenziamento basati su tecnologia HTS. } o FASTA) senza utilizzare un genoma di riferimento.
+
+\paragraph{}  Normalmente DiscoSnp\texttt{++} restituisce gli SNP individuati e classificati nel formato VCF\footnote{VCS : \textbf{scrivere definizione}}, ma opzionalmente può restituirli dopo averli mappati su un genoma di riferimento. Questo può inizialmente apparire in contrasto con un approccio reference free, tuttavia torna particolarmente utile quando si dispone di un genoma di riferimento che non può essere usato per effettuare la chiamata delle varianti (\textbf{variant calling}) tramite tecniche di mappatura ma che può essere usato per posizionare le varianti predette tramite tecniche de-novo. In situazione abbastanza comuni, queste casistiche si presentano quando il genoma di riferimento è stato assemblato male o si sta analizzando un genoma molto distante dalla specie sequenziata. In ogni caso, anche se ci fosse un buon genoma di riferimento, la predizione delle varianti e la genotipizzazione con l'approccio reference free non è influenzato in alcun modo dagli alleli di riferimento.
+
+\subsubsection{Data structure}
+
+\paragraph{}
+DiscoSnp\texttt{++} si basa sulla struttura dati \textsc{MINIA} \cite{chikhi2013space}. In dettaglio questa struttura dati permette la costruzione di grafi di \textit{Bruijn} probabilistici, ottenuti inserendo tutti i nodi di un grafo di \textit{Bruijn}\footnote{\textcolor{red}{Un grafo di \textit{Bruijn} è definito come un grafo diretto che contiene tutti i \textit{k}-mer presenti nei dataset da analizzare come vertici, e tutte le $(\textit{k}-1)$ possibili sovrapposizioni tra i \textit{k}-mer come archi.}} all'interno di Bloom Filter posti in cascata. Gli archi sono detotti implicitamente dalle interrogazioni fatte ai Bloom Filter per l'appartenenza di tutte le possibili estensioni di un \textit{k}-mer e non necessitano di essere memorizzati. In particolare, un'estensione di un \textit{k}-mer \textit{v} è la concatenazione di un suffisso $\textit{k}-1$ di \textit{v} con uno dei quattro possibili nucleotidi $(A,C,G,T)$ o di uno dei quattro nucleotidi con il prefisso  $\textit{k}-1$ di \textit{v}.
+\textsc{MINIA} inoltre supporta un conteggio efficiente ed esatto dei vicini di qualsiasi nodo nel grafico. Pertanto, consente di attraversare in modo efficiente il grafico di de bruijn a partire da qualsiasi nodo, su entrambi i fili avanti e indietro
+
+\paragraph{}
+Nello specifico si concentra sulla ricerca di bolle all'interno del dBG, ovvero due path distinti formati da $k+2$ nodi, che hanno i nodi di diramazione in comune. Più precisamente si definisce nodo di diramazione, o \textit{branching node}, un nodo che ha più di un predecessore e/o più di un successore. Una bolla invece
+
+\subsubsection{Algorithm}
+
+I modelli algoritmici sono stati rivisitati per ottenere un miglior filtraggio degli errori di sequenziamento in modo da individuare nuove varianti.
+
+\subsubsection{Pipeline}
+
+\end{document}

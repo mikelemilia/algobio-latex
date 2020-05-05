@@ -2,25 +2,26 @@
 %   Main TeX file for the project.
 %   Subfiles should reside in the chapters/ directory
 %   and should have a chapter number, title, and a .tex extension.
-%
-% Build:
-%   $ pdflatex main.tex
 
 \documentclass{article}
 \usepackage[left=2cm, right=2cm, top=2cm]{geometry}
 \usepackage{subfiles}
 \usepackage{apacite}
+\usepackage[dvipsnames]{xcolor}
 
-\begin{document}
 \title{Detection Mutation/SNP Mapping-free}
 \author{Barisan Anna, Milia Mikele}
 \date{18 Giugno 2020}
 
+\begin{document}
+
 \maketitle
+
+\tableofcontents
 
 %\subfile{chapters/introduzione.tex}
 %\subfile{chapters/vargeno.tex}
-%\subfile{chapters/discosnp.tex}
+\subfile{chapters/discosnp.tex}
 
 \bibliographystyle{apacite}
 \bibliography{bibliography}
