@@ -4,6 +4,7 @@
 *.alg
 *.bbl
 *.blg
+*.bcf
 *.dvi
 *.glg
 *.glo
@@ -22,3 +23,4 @@
 *.pdf
 *.toc
 *.synctex.gz
+*.run.xml
