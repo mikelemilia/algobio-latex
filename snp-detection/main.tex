@@ -3,15 +3,21 @@
 %   Subfiles should reside in the chapters/ directory
 %   and should have a chapter number, title, and a .tex extension.
 
+% Document class -------------------------------------------------
 \documentclass{article}
+
+% Packages -------------------------------------------------------
 \usepackage[left=2cm, right=2cm, top=2cm]{geometry}
 \usepackage{subfiles}
+\usepackage{hyperref}
+\usepackage[dvipsnames]{xcolor}
+
 \usepackage{apacite}
+\bibliographystyle{apacite}
 \usepackage{etoolbox}
 \makeatletter
 \patchcmd{\nocite}{\ifx\@onlypreamble\document}{\iftrue}{}{}
 \makeatother
-\usepackage[dvipsnames]{xcolor}
 
 \title{Detection Mutation/SNP Mapping-free}
 \author{Barisan Anna, Milia Mikele}
@@ -41,7 +47,6 @@
 
 % Bibliografia
 \newpage
-\bibliographystyle{apacite}
 \bibliography{bibliography}
 
 \end{document}
