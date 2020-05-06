@@ -1,5 +1,5 @@
 % Overview:
-%   Malva TeX subfile for the project.
+%   MALVA TeX subfile for the project.
 %   Each subfile MUST start with the following line
 %		\documentclass[../main.tex]{subfiles}
 
@@ -7,13 +7,32 @@
 
 \begin{document}
 
-\subsection{Malva}
+\subsection{MALVA}
 \label{malva}
 
-\textbf{Scrivere introduzione}
+Il secondo framework che viene presentato è MALVA \cite{bernardini2019malva}. I metodi standard \textit{reference based} ed \textit{alignment free} si concentrano su SNP isolati e biallelici, fornendo un supporto limitato per SNP multi-allelici e per gli indel, brevi inserimenti ed eliminazioni di nucleotidi. MALVA invece si propone come un nuovo metodo che non utilizza l'allineamneto per genotipizzare un individuo da un campione di read, il primo in grado di genotipizzare SNP e indel multi-allelici, anche in regioni genomiche ad alta densità, e di gestire efficacemente un numero grande di varianti. 
 
-\subsubsection{Data structure}
-\subsubsection{Algorithms}
-\subsubsection{Pipeline}
+MALVA è un metodo basato su \textit{word}: a ciascun allele, di ciascuna variante nota, viene assegnata una firma (\textit{signature}) sotto forma di un insieme di k-mer, che consente di modellare in modo efficiente indel e varianti. 
+
+MALVA, dichiarano gli autori, è un tool metodo rapido, leggero e privo di allineamento per genotipizzare varianti note e richiede un ordine di grandezza di tempo in meno per genotipizzare un donatore rispetto agli strumenti basati sull'allineamento, fornendo una precisione simile. Rispetto agli indel, MALVA fornisce risultati migliori rispetto agli strumenti più ampiamente adottati per rileverli.
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsubsection{Struttura Dati}
+
+
+
+\subsubsection{Algoritmo}
+
 
 \end{document}
