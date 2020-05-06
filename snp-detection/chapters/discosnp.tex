@@ -13,9 +13,11 @@ DiscoSnp\texttt{++} \cite{peterlongo2017discosnp++} rientra nella categoria dei 
 
 \paragraph{}  Normalmente DiscoSnp\texttt{++} restituisce gli SNP individuati e classificati nel formato VCF\footnote{VCS : \textbf{scrivere definizione}}, ma opzionalmente può restituirli dopo averli mappati su un genoma di riferimento. Questo può inizialmente apparire in contrasto con un approccio reference free, tuttavia torna particolarmente utile quando si dispone di un genoma di riferimento che non può essere usato per effettuare la chiamata delle varianti (\textbf{variant calling}) tramite tecniche di mappatura ma che può essere usato per posizionare le varianti predette tramite tecniche de-novo. In situazione abbastanza comuni, queste casistiche si presentano quando il genoma di riferimento è stato assemblato male o si sta analizzando un genoma molto distante dalla specie sequenziata. In ogni caso, anche se ci fosse un buon genoma di riferimento, la predizione delle varianti e la genotipizzazione con l'approccio reference free non è influenzato in alcun modo dagli alleli di riferimento.
 
-\subsubsection{Grafo di \textit{Bruijn}}
+\subsubsection{Grafi di \textit{Bruijn}}
 \label{dBG}
 \theoremstyle{definition}
+\paragraph{}Come precedentemente anticipato nella sezione (vedi sezione \ref{rfm}), i grafi di \textit{Bruijn} sono la struttura dati su cui si basano la maggior parte dei tool \textit{reference ree} per la  ricerca di mutazioni (SNP) senza l'utilizzo dell'allinemento, in quanto mutazioni all'interno delle letture generano cammini riconoscibili chiamati "bolle", che possono essere analizzati e classificati (errori di sequenziamento, polimorfismo dovuto a ripetizioni inesatte, reali mutazioni o indel).
+
 \begin{definition} 
 
 Dato un insieme di stringhe $S = \{r_1 , r_2 , ... , r_n\}$ su un alfabeto $\Sigma$ ed un intero $k\geq2$, il grafo di \textit{Bruijn} di ordine $k$ di $S$ $(dBG_k (S))$ è un grafo diretto (o digrafo) $(V,A)$ dove:
@@ -28,18 +30,24 @@ $A = \{ (d,d^\prime)\ |\ se\ il\ suffisso\ di\ lunghezza\ k-1\ di\ d\ \grave{e}\
 
 \end{definition}
 
-\paragraph{}Come precedentemente anticipato nella sezione (\nameref{rfm}), i grafi di \textit{Bruijn} sono la struttura dati su cui si basano la maggior parte dei tool Reference Free per la  ricerca di mutazioni (SNP) senza l'utilizzo dell'allinemento, in quanto mutazioni all'interno delle letture generano cammini riconoscibili chiamati "bolle", che possono essere analizzati e classificati (errori di sequenziamento, polimorfismo dovuto a ripetizioni inesatte, reali mutazioni o indel). In particolare, all'interno di un grafo di \textit{Bruijn}, una bolla evidenzia un cammino che diverge in due cammini distinti prima di ricongiungersi e l'analisi di queste bolle risulta cruciale in quanto la ricostruzione di una sequenza di input \textcolor{red}{(read di DNA)} equivale alla ricerca di un cammino hamiltoniano\footnote{Un cammino in un grafo (orientato o non orientato) è detto \textbf{hamiltoniano} se esso tocca tutti i vertici (nodi) del grafo una e una sola volta. Determinare se questo cammino esista è un problema NP-completo. Un grafo che contiene almeno un ciclo hamiltoniano è detto \textbf{grafo hamiltoniano}.} all'interno del grafo, noto problema NP-completo. Quindi riuscire ad ottimizzare la ricerca all'interno questa struttura dati è quello che si propone DiscoSnp\texttt{++} tramite i $dBG$ \textit{probabilistici}.
+ In particolare, all'interno di un grafo di \textit{Bruijn}, una bolla evidenzia un cammino che diverge in due cammini distinti prima di ricongiungersi e l'analisi di queste bolle risulta cruciale in quanto la ricostruzione di una sequenza di input equivale alla ricerca di un cammino hamiltoniano\footnote{Un cammino in un grafo (orientato o non orientato) è detto \textbf{hamiltoniano} se esso tocca tutti i vertici (nodi) del grafo una e una sola volta. Determinare se questo cammino esista è un problema NP-completo. Un grafo che contiene almeno un ciclo hamiltoniano è detto \textbf{grafo hamiltoniano}.} all'interno del grafo, noto problema NP-completo.
 
-\subsubsection{Struttura dati}
+\begin{definition}
+Si definisce bolla un cammino che partendo da un nodo di diramazione\footnote{Un nodo di diramazione, o \textit{branching node}, un nodo che ha più di un predecessore e/o più di un successore.} (sinistro) chiamato \textit{start} e seguendo i cammini generati dai due nodi figli $n_h$ e $n_l$ (rispettivamente chiamati \textit{superiore} e \textit{inferiore}) termina in un nodo di diramazione destro. Dipendentemente dal tipo di mutazione (SNP) che ha prodotto la bolla, i due cammini possono avere lunghezze diverse. Se il nodo \textit{start} ha più di due nodi figli (destri), tutte le possibili coppie sono trattate come $n_h$ e $n_l$.
+\end{definition}
 
-\paragraph{} DiscoSnp\texttt{++} basa la sua efficienza sulla struttura dati Minia \cite{chikhi2013space} che permette di costruire grafi di \textit{Bruijn} probabilistici. Questa specifica struttura dati è ottenuta inserendo tutti i nodi di un grafo di \textit{Bruijn} classico all'interno di filtri Bloom (\textcolor{red}{Bloom Filter}) posti in cascata. All'interno di questa struttura dati, differentemente da un grafo di \textit{Bruijn} classico, gli archi sono dedotti implicitamente dalle interrogazioni fatte ai filtri Bloom (\textcolor{red}{Bloom Filter}) per l'appartenenza di tutte le possibili estensioni di un \textit{k}-mer e non necessitano di essere memorizzati. In particolare, un'estensione di un \textit{k}-mer \textit{v} è la concatenazione di un suffisso $\textit{k}-1$ di \textit{v} con uno dei quattro possibili nucleotidi o di uno dei quattro nucleotidi con il prefisso  $\textit{k}-1$ di \textit{v}. \textcolor{red}{Minia inoltre supporta un conteggio efficiente ed esatto dei vicini di qualsiasi nodo nel grafo. Pertanto, questo consente di attraversare in modo efficiente il grafo a partire da qualsiasi nodo, in entrambe le direzioni.}
+ Quindi riuscire ad ottimizzare la ricerca all'interno questa struttura dati è quello che si propone DiscoSnp\texttt{++} tramite i $dBG$ \textit{probabilistici}.
 
-\subsubsection{Algoritmo}
+\subsubsection{Struttura dati di DiscoSnp\texttt{++}}
+
+\paragraph{} DiscoSnp\texttt{++} basa la sua efficienza sulla struttura dati Minia \cite{chikhi2013space} che permette di costruire grafi di \textit{Bruijn} probabilistici. Questa specifica struttura dati è ottenuta inserendo tutti i nodi di un grafo di \textit{Bruijn} classico all'interno di Bloom Filter posti in cascata. All'interno di questa struttura dati, differentemente da un grafo di \textit{Bruijn} classico, gli archi sono dedotti implicitamente dalle interrogazioni fatte ai Bloom Filter per l'appartenenza di tutte le possibili estensioni di un \textit{k}-mer e non necessitano di essere memorizzati. In particolare, un'estensione di un \textit{k}-mer \textit{v} è la concatenazione di un suffisso $\textit{k}-1$ di \textit{v} con uno dei quattro possibili nucleotidi o di uno dei quattro nucleotidi con il prefisso  $\textit{k}-1$ di \textit{v}. \textcolor{red}{Minia inoltre supporta un conteggio efficiente ed esatto dei vicini di qualsiasi nodo nel grafo. Pertanto, questo consente di attraversare in modo efficiente il grafo a partire da qualsiasi nodo, in entrambe le direzioni.}
+
+\subsubsection{Algoritmo di DiscoSnp\texttt{++}}
 
 \paragraph{} Gli algoritmi presenti all'interno dei moduli di DiscoSnp (\textsc{KisSnp2} e \textsc{KissReads}) sono stati stati rivisitati per ottenere un miglior filtraggio degli errori di sequenziamento in modo da individuare nuove mutazioni (SNP). 
 
 \paragraph{}
-L'algoritmo su cui si basa DiscoSnp\texttt{++}, dopo che il $dBG$ è stato costruito, si concentra sulla ricerca e la classificazione delle bolle\footnote{Si definisce bolla un cammino che partendo da un branching node (sinistro) chiamato \textit{start} e seguendo i cammini generati dai due nodi figli $n_h$ e $n_l$ (rispettivamente chiamati \textit{superiore} e \textit{inferiore}) termina in un branching node destro. Dipendentemente dal tipo di mutazione (SNP) che ha prodotto la bolla, i due cammini possono avere lunghezze diverse. Se il nodo \textit{start} ha più di due nodi figli (destri), tutte le possibili coppie sono trattate come $n_h$ e $n_l$.} all'interno del grafo, ovvero la ricerca di due path distinti formati da $k+2$ nodi, che hanno in comune i \textit{nodi di diramazione}\footnote{Si definisce nodo di diramazione, o \textit{branching node}, un nodo che ha più di un predecessore e/o più di un successore.}. Tenendo conto anche del fatto che una bolla può essere o meno ramificata\footnote{Una bolla si dice \textit{ramificata} quando almeno uno dei due path contiene un \textit{branching node}. Sono esclusi da questa caratterizzazione il primo e l'ultimo nodo della bolla.}, e presentare simmetria\footnote{Una bolla ramificata può essere \textit{simmetrica} o \textit{non simmetrica}. Intuitivamente le bolle ramificate sono bolle in cui dai nodi $n_h$ e $n_l$, più di due cammini possono essere percorsi simultaneamente. Al contrario nelle bolle ramificate non simmetriche, dai nodi $n_h$ e $n_l$ esistono esattamente un unico paio di cammini (superiore e inferiore) che convergono ad un branching node di destinazione.}. Dipendentemente dai parametri DiscoSnp\texttt{++} può individuare solo bolle ramificate, o bolle non ramificate e non simmetriche, o qualunque tipo di bolla senza restizioni.
+L'algoritmo su cui si basa DiscoSnp\texttt{++}, dopo che il $dBG$ è stato costruito, si concentra sulla ricerca e la classificazione delle bolle all'interno del grafo, ovvero la ricerca di due path distinti formati da $k+2$ nodi, che hanno in comune i \textit{nodi di diramazione}. Tenendo conto anche del fatto che una bolla può essere o meno ramificata\footnote{Una bolla si dice \textit{ramificata} quando almeno uno dei due path contiene un \textit{branching node}. Sono esclusi da questa caratterizzazione il primo e l'ultimo nodo della bolla.}, e presentare simmetria\footnote{Una bolla ramificata può essere \textit{simmetrica} o \textit{non simmetrica}. Intuitivamente le bolle ramificate sono bolle in cui dai nodi $n_h$ e $n_l$, più di due cammini possono essere percorsi simultaneamente. Al contrario nelle bolle ramificate non simmetriche, dai nodi $n_h$ e $n_l$ esistono esattamente un unico paio di cammini (superiore e inferiore) che convergono ad un branching node di destinazione.}. Dipendentemente dai parametri DiscoSnp\texttt{++} può individuare solo bolle ramificate, o bolle non ramificate e non simmetriche, o qualunque tipo di bolla senza restizioni.
 
 Dipendentemente dalle mutazioni (SNP), l'algoritmo classifica le bolle nei seguenti modi. Se i cammini $n_h$ e $n_l$ sono composti da esattamente $k$ nodi, allora si tratta di una mutazione (variazione) \textit{isolata} in quanto non esistono altri polimorfismi (mutazioni), e quindi \textit{branching node}, nei $k$ nucleotidi prima e dopo la posizione della mutazione. Se invece la bolla generata presenta due cammini con lo stesso numero di nodi, maggiore di $k$, siamo in presenza di una variazone \textit{non isolata}. Nel caso i cammini generati da $n_h$ e $n_l$ si presentano con un diverso numero di nodi, siamo in presenza di indel. Solitamente il cammino di lunghezza minima prodotto ha esattamente $k-1$ nodi, ma dipendentemente dal contesto in cui si verifica la lunghezza può variare ed essere inferiore a $k-1$\footnote{Accade quando l'indel e ciò che lo segue (o precede) hanno un prefisso (o suffisso) comune di dimensione $> 0$. Più precisamente se le dimensioni di prefisso e suffisso sono rispettivamente $p_1$ e $p_2$, il cammino di lunghezza minima è composto da $max(0, k-1-p_1 - p_2)$ nodi e quello di lunghezza massima è composto da $k-1+d-p_1 - p_2$ con $d$ dimensione dell'indel.}.
 
@@ -48,27 +56,29 @@ Dipendentemente dalle mutazioni (SNP), l'algoritmo classifica le bolle nei segue
 \begin{figure}[ht]
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.8\linewidth]{images/discosnp_alg1.png}
+  %\includegraphics[width=.8\linewidth]{images/discosnp_alg1.png}
   \caption{1a}
   \label{fig:sfig1}
 \end{subfigure}
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.8\linewidth]{images/discosnp_alg2.png}
+ % \includegraphics[width=.8\linewidth]{images/discosnp_alg2.png}
   \caption{1b}
   \label{fig:sfig2}
 \end{subfigure}
 \end{figure}
 
-\subsubsection{Pipeline}
-
 \begin{figure}[h]
 	\centering
   	\captionsetup{justification=centering}
-  	\includegraphics[scale=.90]{images/discosnp_pipeline.jpg}
+  	%\includegraphics[scale=.90]{images/discosnp_pipeline.jpg}
   	\caption{DiscoSnp\texttt{++} pipeline. Nel caso sia fornito un genoma di riferimento, il VCF file conterrà anche il posizionamento delle previsioni mappate.}
   	\label{fig:pipe1}
 \end{figure}
+
+\subsubsection{Prestazioni}
+
+
 
 
 \end{document}
