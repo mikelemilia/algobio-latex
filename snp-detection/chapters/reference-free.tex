@@ -1,0 +1,24 @@
+% Overview:
+%   Introduzione TeX subfile for the project.
+%   Each subfile MUST start with the following line
+%		\documentclass[../main.tex]{subfiles}
+
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\section{Reference Free Frameworks}
+\label{rfm}
+
+\textcolor{red}{
+Il grafico de Bruijn di una serie di sequenze di DNA o RNA
+è una struttura di dati che svolge un ruolo sempre più importante nelle applicazioni di sequenziamento di prossima generazione. Tuttavia, un importante problema pratico di questa struttura è la sua elevata impronta di memoria per i grandi organismi. Ad esempio, il codifica semplice del grafico de Bruijn per l'essere umano il genoma (n $circa$ 2,4 · 109, dimensione k-mer k = 27) richiede 15 GB (n · k / 4 byte) di memoria per memorizzare le sequenze di nodi solo. Grafici per genomi e metagenomi molto più grandi non può essere costruito su un tipo. TODO: Migliorare e ampliare introduzione sui refence free frameworks.}
+
+I metodi reference-based sopracitati, non possono essere applicati quando non è presente un genoma di riferimento. 
+In generale, i metodi reference-free specializzati nell’individuare SNP possono essere divisi in due macro categorie: 
+\begin{itemize} 
+\item i metodi della prima categoria eseguono inizialmente un assemblaggio de novo (de novo assembly) per costruire una sequenza di riferimento. Successivamente tramite un sotto-modulo (subroutine) reference based per mappare le letture (reads) di ogni individuo su questa nuova sequenza di riferimento. Ci si riferisce a questi metodi come ibridi (hybrid) siccome utilizzano sia assemblaggio de novo sia tecniche di mappatura (mapping techniques) per individuare SNP.
+\item i metodi della seconda categoria si concentrano direttamente sull’assemblaggio degli SNP, senza cercare di assemblare preventivamente un riferimento completo (full reference)
+\end{itemize}
+
+\end{document}
