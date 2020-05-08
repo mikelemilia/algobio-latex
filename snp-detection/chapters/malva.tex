@@ -45,6 +45,16 @@ Viceversa, il set REFSIG è implementato come una semplice tabella hash, poiché
 
 L'algoritmo utilizza la definizione di \textit{signature} di un allele e la sua frequenza per rilevare la sua presenza in un individuo (nelle read) senza effettuare l'allineamento delle read sul genoma di riferimento e chiamare il genotipo. Esso funziona supponendo che, dato un campione di read da un genoma, se un allele è incluso nel genoma, almeno una delle sue firme deve esistere come sottostringa in read multiple.
 
+Nella sottostante Figura \ref{fig:malva} è riportata graficamente la pipeline di MALVA: verranno poi esaminati in dettaglio i passaggi principale.
+
+ \begin{figure}[h!]
+	\centering
+  	\captionsetup{justification=centering}
+  	\includegraphics[scale=.90]{images/malva-pipeline.jpg}
+  	\caption{Pipeline, MALVA.}
+  	\label{fig:malva}
+\end{figure}
+
 Il metodo principale è composto da quattro fasi.
 
 Nella prima fase si calcola l'insieme delle firme di lunghezza \textit{${k}_{s}$} di tutti gli alleli alternati di tutte le varianti nel file VCF che vengono memorizzate nell'insieme ALTSIG. Le firme degli alleli di riferimento vengono invece calcolate e memorizzate in un altro set chimato REFSIG. Quindi, vengono memorizzati due pesi per ogni \textit{${k}_{s}$}-mer \textit{t} di una firma: \textit{${w_{t}}_{A}$} rappresenta il numero di occorrenze di \textit{t} nella \textit{signature} di un allele alternato e \textit{${w_{t}}_{R}$} nella \textit{signature} di un allele di riferimento. Nel costruire le firme di un allele bisogna controllare anche tutti gli alleli delle varianti nel raggio di $\lfloor \frac{ {{{k}_{s}} }}{2}  \rfloor$: usando il file VCF vengono ricostruite le sequenze in base alle informazioni sul genotipo che include. 
@@ -66,6 +76,7 @@ dato il genotipo considerato: per computare queste probabilità vengonp nuovamen
 
 \subsubsection{Prestazioni}
  \textcolor{red} {credo questa parte non ci vada, ci sono solo confronti e test con altri tool da mettere alla fine, no singole prestazioni}
+ 
 
 
 \end{document}
