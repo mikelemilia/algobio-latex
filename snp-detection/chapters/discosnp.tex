@@ -34,13 +34,13 @@ I grafi di \textit{de Bruijn} sono quindi grafi diretti che ben si adattano a ra
 \begin{figure}[h!]
 	\centering
   	\captionsetup{justification=centering}
-  	\includegraphics[scale=.3]{images/dBG.png}
+%  	\includegraphics[scale=.3]{images/dBG.png}
   	\caption{Esempio di grafo di \textit{de Bruijn} costruito da k-mers sovrapposti.}
   	\label{fig:dBG}
 \end{figure}
 
 \noindent
-Poichè i dati sequenziati contengono errori (stimati tra lo 0.1\% e l'1\%) e le ripetizioni genomiche possono essere molto lunghe, gli errori sulle read possono causare vicoli ciechi nel percorso e ripetizioni nel genoma puossono causare cicli nel grafo. Una mutazione (SNP) causerà con alta probabilità queste sottostrutture. Perciò concentrandoci su queste strutture, anziche buttarle via, si possono identificare la variazioni direttamente all'interno del grafo. La struttura di base che indica la presenza di un SNP è descritta come una `bolla' (vedi Figura \ref{fig:dBG_bubble}).
+Poichè i dati sequenziati contengono errori (stimati tra 0.1\% e 1\%) e le ripetizioni genomiche possono essere molto lunghe, gli errori sulle read possono causare vicoli ciechi nel percorso e ripetizioni nel genoma puossono causare cicli nel grafo. Una mutazione (SNP) causerà con alta probabilità queste sottostrutture. Perciò concentrandoci su queste strutture, anziche buttarle via, si possono identificare la variazioni direttamente all'interno del grafo. La struttura di base che indica la presenza di un SNP è descritta come una `bolla' (vedi Figura \ref{fig:dBG_bubble}).
 
 \begin{definition}
 Una bolla è una biforcazione chiusa di un cammino ed è causata da una singola differenza nucleoditica alla fine di un \textit{k}-mer. Partendo da un nodo (sinistro) chiamato \textit{start} è possibile seguire i cammini generati dai due nodi figli $n_h$ e $n_l$ (rispettivamente chiamati \textit{superiore} e \textit{inferiore}) terminando in un nodo (destro) chiamato \textit{end}. Dipendentemente dal tipo di mutazione (SNP) che ha prodotto la bolla, i due cammini possono avere lunghezze diverse. Se il nodo \textit{start} ha più di due nodi figli (destri), tutte le possibili coppie sono trattate come $n_h$ e $n_l$.
@@ -49,7 +49,7 @@ Una bolla è una biforcazione chiusa di un cammino ed è causata da una singola 
 \begin{figure}[h!]
 	\centering
   	\captionsetup{justification=centering}
-  	\includegraphics[scale=.3]{images/dBG_bubble.png}
+%  	\includegraphics[scale=.3]{images/dBG_bubble.png}
   	\caption{Esempio di bolla all'interno di un grafo di \textit{de Bruijn}.}
   	\label{fig:dBG_bubble}
 \end{figure}
@@ -66,43 +66,39 @@ DiscoSnp\texttt{++} basa la sua efficienza sulla struttura dati Minia \cite{chik
 \paragraph{Struttura \textit{cFP}} Per risolvere questo inconveniente,\cite{chikhi2013space} hanno implementato all'interno di Minia un meccanismo per evitare false diramazioni. In dettaglio, questo meccanismo si occupa di individuare e memorizzare gli elementi (\textit{k}-mer falsi positivi) che sono responsabili delle false ramificazioni all'interno di \textit{cFP} (critical False Positive), una struttura separata, implementata tramite la struttura dati set che consente rapidi test di appartenenza o meno all'insieme. Ogni interrogazione fatta al Bloom Filter è quindi modificata in modo tale che produca si (true) se e solo se il Bloom Filter risponde si (true) e se l'elemento su cui si sta interrogando non è presente all'interno di \textit{cFP}. Naturalmente, se \textit{cFp} contenesse tutti i \textit{k}-mer falsi positivi, i vantaggi di usare un Bloom Filter per migliorare l'efficienza dell'uso della memoria andrebbero persi. L'osservazione chiave, risiede nel fatto che i \textit{k}-mer che vengono interrogati mentre si attraversa il grafo non sono tutti i possibili \textit{k}-mer. 
 
 \subparagraph{Osservazione} Sia $S$ l'insieme dei nodi falsi positivi, ed $E$ l'insieme delle estensioni dei nodi da $S$. Assumendo che il grafo viene attraversato iniziando da un nodo in $S$, i falsi positivi che non appartengono a $E$ non verranno mai interrogati. Perciò, l'insieme \textit{cFP} sarà un sotto-insieme di $E$. Sia $P$ l'insieme di tutti gli elementi di $E$ per il quale il Bloom Filter risponde si. Allora l'insieme \textit{cFP}, dei falsi positivi critici, è formalmente definito come $cFP = P \setminus S$.
-\\\\
-\textcolor{red}{Inserire le formule per la dimensione effettiva del grafo probabilistico}
+
+\noindent
+\paragraph{}\textcolor{red}{Inserire le formule per la dimensione effettiva del grafo probabilistico?}
 
 \subsubsection{Algoritmo di DiscoSnp\texttt{++}}
 
-\paragraph{} Gli algoritmi presenti all'interno dei moduli di \textsc{DiscoSnp} (\textsc{KisSnp2} e \textsc{KissReads}) sono stati stati rivisitati per ottenere un miglior filtraggio degli errori di sequenziamento in modo da individuare nuove mutazioni (SNP). 
+Gli algoritmi presenti all'interno dei moduli di \textsc{DiscoSnp} (\textsc{KisSnp2} e \textsc{KissReads}) sono stati stati rivisitati per ottenere un miglior filtraggio degli errori di sequenziamento in modo da individuare nuove mutazioni (SNP). 
 
-\paragraph{}
-L'algoritmo su cui si basa DiscoSnp\texttt{++}, dopo che il $dBG$ è stato costruito, si concentra sulla ricerca e la classificazione delle bolle all'interno del grafo, ovvero la ricerca di due path distinti formati da $k+2$ nodi, che hanno in comune i \textit{nodi di diramazione}\footnote{Un nodo di diramazione, o \textit{branching node}, un nodo che ha più di un predecessore e/o più di un successore.}. Tenendo conto anche del fatto che una bolla può essere o meno ramificata\footnote{Una bolla si dice \textit{ramificata} quando almeno uno dei due path contiene un \textit{branching node}. Sono esclusi da questa caratterizzazione il primo e l'ultimo nodo della bolla.}, e presentare simmetria\footnote{Una bolla ramificata può essere \textit{simmetrica} o \textit{non simmetrica}. Intuitivamente le bolle ramificate sono bolle in cui dai nodi $n_h$ e $n_l$, più di due cammini possono essere percorsi simultaneamente. Al contrario nelle bolle ramificate non simmetriche, dai nodi $n_h$ e $n_l$ esistono esattamente un unico paio di cammini (superiore e inferiore) che convergono ad un branching node di destinazione.}. Dipendentemente dai parametri DiscoSnp\texttt{++} può individuare solo bolle ramificate, o bolle non ramificate e non simmetriche, o qualunque tipo di bolla senza restizioni.
-
-Dipendentemente dalle mutazioni (SNP), l'algoritmo classifica le bolle nei seguenti modi. Se i cammini $n_h$ e $n_l$ sono composti da esattamente $k$ nodi, allora si tratta di una mutazione (variazione) \textit{isolata} in quanto non esistono altri polimorfismi (mutazioni), e quindi \textit{branching node}, nei $k$ nucleotidi prima e dopo la posizione della mutazione. Se invece la bolla generata presenta due cammini con lo stesso numero di nodi, maggiore di $k$, siamo in presenza di una variazone \textit{non isolata}. Nel caso i cammini generati da $n_h$ e $n_l$ si presentano con un diverso numero di nodi, siamo in presenza di indel. Solitamente il cammino di lunghezza minima prodotto ha esattamente $k-1$ nodi, ma dipendentemente dal contesto in cui si verifica la lunghezza può variare ed essere inferiore a $k-1$\footnote{Accade quando l'indel e ciò che lo segue (o precede) hanno un prefisso (o suffisso) comune di dimensione $> 0$. Più precisamente se le dimensioni di prefisso e suffisso sono rispettivamente $p_1$ e $p_2$, il cammino di lunghezza minima è composto da $max(0, k-1-p_1 - p_2)$ nodi e quello di lunghezza massima è composto da $k-1+d-p_1 - p_2$ con $d$ dimensione dell'indel.}.
+\paragraph{Pipeline} \textcolor{red}{Descrivere la pipeline del framework}
+\\
+Uno dei moduli su cui si basa DiscoSnp\texttt{++}, si concentra sulla ricerca e la classificazione delle bolle all'interno del grafo, ovvero la ricerca di due path distinti formati da $k+2$ nodi, che hanno in comune i \textit{nod di diramazione}\footnote{Un nodo di diramazione, o \textit{branching node}, un nodo che ha più di un predecessore e/o più di un successore.} iniziale e finale. L'algoritmo tiene conto anche del fatto che una bolla può essere ramificata, e/o simmetrica.
 
 \begin{definition}
-Una bolla e un cammino che partendo da un nodo di diramazione\footnote{Un nodo di diramazione, o \textit{branching node}, un nodo che ha più di un predecessore e/o più di un successore.} (sinistro) chiamato \textit{start} e seguendo i cammini generati dai due nodi figli $n_h$ e $n_l$ (rispettivamente chiamati \textit{superiore} e \textit{inferiore}) termina in un nodo di diramazione destro. Dipendentemente dal tipo di mutazione (SNP) che ha prodotto la bolla, i due cammini possono avere lunghezze diverse. Se il nodo \textit{start} ha più di due nodi figli (destri), tutte le possibili coppie sono trattate come $n_h$ e $n_l$.
+Una bolla si definisce \textit{ramificata} quando almeno uno dei due path generati da $n_h$ e $n_l$ contiene un \textit{branching node}. Sono esclusi da questa caratterizzazione i nodi \textit{start} ed \textit{end} della bolla.
 \end{definition}
 
-\textcolor{red}{Continuare qui!}
+\begin{definition}
+Una bolla ramificata si definisce \textit{simmetrica} se più di due cammini possono essere percorsi simultaneamente partendo dai nodi $n_h$ e $n_l$. Al contrario una bolla ramificata si definisce \textit{non simmetrica} se dai nodi $n_h$ e $n_l$ esistono esattamente due cammini (superiore e inferiore) che convergono ad un \textit{branching node} di destinazione.
+\end{definition}
 
-\begin{figure}[ht]
-\begin{subfigure}{.5\textwidth}
-  \centering
-  %\includegraphics[width=.8\linewidth]{images/discosnp_alg1.png}
-  \caption{1a}
-  \label{fig:sfig1}
-\end{subfigure}
-\begin{subfigure}{.5\textwidth}
-  \centering
- % \includegraphics[width=.8\linewidth]{images/discosnp_alg2.png}
-  \caption{1b}
-  \label{fig:sfig2}
-\end{subfigure}
-\end{figure}
+\noindent
+\\
+\textcolor{red}{Inserirlo quando si parla dell'algoritmo che individua le bolle} 
+L'algoritmo di DiscoSnp\texttt{++} è inoltre in grado di classificare le bolle in base alla mutazione (SNP) che l'ha generata. Se i cammini $n_h$ e $n_l$ sono composti da esattamente $k$ nodi, allora si tratta di una mutazione (variazione) \textit{isolata} in quanto non esistono altri polimorfismi (mutazioni), e quindi \textit{branching node}, nei $k$ nucleotidi prima e dopo la posizione della mutazione. Se invece la bolla generata presenta due cammini con lo stesso numero di nodi, maggiore di $k$, siamo in presenza di una variazone \textit{non isolata}. Nel caso i cammini generati da $n_h$ e $n_l$ si presentano con un diverso numero di nodi, siamo in presenza di indel. Solitamente il cammino di lunghezza minima prodotto ha esattamente $k-1$ nodi, ma dipendentemente dal contesto in cui si verifica la lunghezza può variare ed essere inferiore a $k-1$\footnote{Accade quando l'indel e ciò che lo segue (o precede) hanno un prefisso (o suffisso) comune di dimensione $> 0$. Più precisamente se le dimensioni di prefisso e suffisso sono rispettivamente $p_1$ e $p_2$, il cammino di lunghezza minima è composto da $max(0, k-1-p_1 - p_2)$ nodi e quello di lunghezza massima è composto da $k-1+d-p_1 - p_2$ con $d$ dimensione dell'indel.}.
+
+\noindent
+\\
+Dipendentemente dai parametri DiscoSnp\texttt{++} può individuare solo bolle ramificate, o bolle non ramificate e non simmetriche, o qualunque tipo di bolla senza restizioni. \textcolor{red}{Definisci quali parametri.}
 
 \begin{figure}[h]
 	\centering
   	\captionsetup{justification=centering}
-  	%\includegraphics[scale=.90]{images/discosnp_pipeline.jpg}
+  	\includegraphics[scale=.90]{images/discosnp_pipeline.jpg}
   	\caption{DiscoSnp\texttt{++} pipeline. Nel caso sia fornito un genoma di riferimento, il VCF file conterrà anche il posizionamento delle previsioni mappate.}
   	\label{fig:pipe1}
 \end{figure}
