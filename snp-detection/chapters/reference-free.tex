@@ -10,14 +10,14 @@
 \section{Reference Free Frameworks}
 \label{rfm}
 
-Nei metodi \textit{reference based} trattati precedentemente (vedi sezione \ref{rbm}) si utilizzano un genoma di riferimento e una lista preassegnata di SNP noti per chiamare le varianti all'interno delle read. Perci\`o il modello predominante \`e quello di avere un singolo genoma di riferimento a cui verranno confrontati tutti gli altri. Spesso la costruzione di questo genoma di riferimento richiede un enorme quantit\`a di tempo e risorse. Per evitare questa spesa, i metodi \textit{reference free} specializzati nell\textquotesingle individuare SNP (Single Nucleotide Polymorphisms) e mutazioni non si aspettano in input un genoma di riferimento e possono essere divisi in due macro categorie:
+Nei metodi \textit{reference based} trattati precedentemente (vedi sezione \ref{rbm}) si utilizzano un genoma di riferimento e una lista preassegnata di SNP noti per chiamare le varianti all'interno delle read. Perciò il modello predominante è quello di avere un singolo genoma di riferimento a cui verranno confrontati tutti gli altri. Spesso la costruzione di questo genoma di riferimento richiede un enorme quantità di tempo e risorse. Per evitare questa spesa, i metodi \textit{reference free} specializzati nell\textquotesingle individuare SNP (Single Nucleotide Polymorphisms) e mutazioni non si aspettano in input un genoma di riferimento e possono essere divisi in due macro categorie:
 
 \begin{itemize} 
 \item[-] metodi che eseguono inizialmente un assemblaggio \textit{de novo} (\textit{de novo assembly}) per costruire una sequenza di riferimento e successivamente tramite un sotto-modulo (subroutine) reference based mappano le read di ogni individuo su questa nuova sequenza di riferimento. Ci si riferisce a questi metodi come ibridi (\textit{hybrid}) siccome utilizzano sia assemblaggio \textit{de novo} sia tecniche di mappatura per individuare SNP.
 \item[-] metodi che si concentrano direttamente sull’assemblaggio degli SNP, senza cercare di assemblare preventivamente un riferimento completo
 \end{itemize}
 
-In questa terza sezione si riporteranno e analizzeranno alcuni dei pi\`u attuali e significativi metodi che non utilizzano la costosa pratica di allineamento delle read e un genoma di riferimento per determinare mutazioni ed SNP ed effettuare la genotipizzazione. In particolare, per le seguenti ragioni, sono stati selezionati i framework:
+In questa terza sezione si riporteranno e analizzeranno alcuni dei più attuali e significativi metodi che non utilizzano la costosa pratica di allineamento delle read e un genoma di riferimento per determinare mutazioni ed SNP ed effettuare la genotipizzazione. In particolare, per le seguenti ragioni, sono stati selezionati i framework:
 \begin{itemize} 
 \item[-] Kevlar (sezione \ref{kevlar}): questo framework \cite{}
 \item[-] \textsc{DiscoSnp}\texttt{++} (sezione \ref{discosnp++}): questo framework \cite{} 
