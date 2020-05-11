@@ -17,7 +17,7 @@ MALVA è un metodo basato su \textit{word}: a ciascun allele, di ciascuna varian
 Dichiarano gli autori che è un tool metodo rapido, leggero e privo di allineamento per genotipizzare varianti note e richiede un ordine di grandezza di tempo in meno per genotipizzare un donatore rispetto agli strumenti basati sull'allineamento, fornendo una precisione simile. Anche se le varianti multi-alleliche sono più difficili da genotipizzare rispetto a quelle bi-alleliche, si ottenere alta precisione e richiamo. Rispetto agli indel, MALVA fornisce risultati migliori rispetto agli strumenti più ampiamente adottati per rilevarli. 
 
 
-\subsubsection{Definizioni e Struttura Dati}
+\subsubsection{Definizioni e Struttura Dati di MALVA}
 
 Il framework prende in input il genoma di riferimento, una lista di varianti e un set di read e restituisce in output un file VCF contenente il genotipo più probabile per ogni variante. Le varianti sono codificate in un file VCF (Variant Calling Format): ogni riga del file definisce una variante e contiene le relative informazioni; le varianti considerate sono SNP e indel.
 
@@ -38,10 +38,10 @@ Il set ALTSIG è costruito con un Bloom filter ed una singola funzione di hash (
  
 Allo stesso modo, il set REPCTX viene implementato con un Bloom filter ad una singola funzione hash. 
 
-Viceversa, il set REFSIG è implementato come una semplice tabella hash, poich\'e il numero di elementi che memorizza è generalmente inferiore al numero di elementi memorizzati in ALTSIG. 
+Viceversa, il set REFSIG è implementato come una semplice tabella hash, poiché il numero di elementi che memorizza è generalmente inferiore al numero di elementi memorizzati in ALTSIG. 
 
 
-\subsubsection{Algoritmo}
+\subsubsection{Algoritmo di MALVA}
 
 L'algoritmo utilizza la definizione di \textit{signature} di un allele e la sua frequenza per rilevare la sua presenza in un individuo (nelle read) senza effettuare l'allineamento delle read sul genoma di riferimento e chiamare il genotipo. Esso funziona supponendo che, dato un campione di read da un genoma, se un allele è incluso nel genoma, almeno una delle sue firme deve esistere come sottostringa in read multiple.
 
@@ -61,22 +61,13 @@ Nella prima fase si calcola l'insieme delle firme di lunghezza \textit{${k}_{s}$
 
 Nella seconda fase viene effettuato il rilevamento delle \textit{signature} ripetute: per piccoli valori di  \textit{${k}_{s}$} la probabilità che i  \textit{${k}_{s}$}-mer che compongono una firma compaiano in altre regioni del genoma è alta. Poiché successivamente si sfrutteranno le firme degli alleli di ciascuna variante per chiamare i genotipi, la presenza di regioni conservate del genoma di riferimento identiche a una firma potrebbe portare il framework a a genotipizzare erroneamente alcune varianti. Si utilizza perciò il contesto attorno all'allele per distinguere le firme da tali regioni. Se un  \textit{${k}_{s}$}-mer di una firma di un allele alternato appare in qualche parte nel genoma di riferimento, MALVA estrae il contesto di lunghezza  \textit{${k}_{c}$} della regione del genoma di riferimento attorno a tale  \textit{${k}_{s}$}-mer (con  \textit{${k}_{c}$} $>$  \textit{${k}_{s}$}) e raccoglie tali  \textit{${k}_{c}$}-mer in un terzo set, REPCTX. In pratica, si rilevano e memorizzano nel set REPCTX  tutti i  \textit{${k}_{c}$}-mer della sequenza di riferimento il cui \textit{${k}_{s}$}-mer centrale è incluso in alcune \textit{signature} di alleli alternati. 
 
-Nella terza fase MALVA estrae tutti i  \textit{${k}_{c}$}-mer dalla read e il rispettivo numero di occorrenze. Per ogni  \textit{${k}_{c}$}-mer  \textit{${t}_{c}$} che appare \textit{w} volte nel campione, viene estratto il  \textit{${k}_{s}$}-mer  \textit{${t}_{s}$} centrale. Se  \textit{${t}_{s}$} è in REFSIG, ovvero è la firma dell'allele di riferimento di una variante, \textit{${w_{{t}_{s}}}^{R}$} è aumentato di \textit{w}. Se  \textit{${t}_{c}$} non è in REPCTX e  \textit{${t}_{s}$} è in ALTSIG, \textit{${w_{{t}_{s}}}^{A}$} viene aumentato di \textit{w}. Altrimenti, se  \textit{${t}_{c}$} è in REPCTX, \textit{${w_{{t}_{s}}}^{A}$} non viene aggiornato, poiché sebbene il suo \textit{${k}_{s}$}-mer centrale sia uguale ad alcuni \textit{signature}  \textit{${k}_{s}$}-mer di allele alternato, è indistinguibile da un'altra regione del genoma che non copre la variante. Notiamo che quando \textit{${w_{{t}_{s}}}^{A}$} non viene aggiornato, potrebbe esserci la possibilità di non contare una variante del donatore e riportare un falso negativo: per grandi valori di  \textit{${k}_{c}$} ciò accade raramente. Questa è stata una scelta di progettazione: si preferisce evitare bias dovuti ai  \textit{${k}_{c}$}-mer nelle regioni conservate del genoma di riferimento, preferendo non contare l'allele alternato ogni volta che sorgono ambiguità.
+Nella terza fase MALVA estrae tutti i  \textit{${k}_{c}$}-mer dalla read e il rispettivo numero di occorrenze. Per ogni  \textit{${k}_{c}$}-mer  \textit{${t}_{c}$} che appare \textit{w} volte nel campione, viene estratto il  \textit{${k}_{s}$}-mer  \textit{${t}_{s}$} centrale. Se  \textit{${t}_{s}$} è in REFSIG, ovvero è la firma dell'allele di riferimento di una variante, \textit{${w_{{t}_{s}}}^{R}$} è aumentato di \textit{w}. Se  \textit{${t}_{c}$} non è in REPCTX e  \textit{${t}_{s}$} è in ALTSIG, \textit{${w_{{t}_{s}}}^{A}$} viene aumentato di \textit{w}. Altrimenti, se  \textit{${t}_{c}$} è in REPCTX, \textit{${w_{{t}_{s}}}^{A}$} non viene aggiornato, poiché sebbene il suo \textit{${k}_{s}$}-mer centrale sia uguale ad alcuni \textit{signature}  \textit{${k}_{s}$}-mer di allele alternato, è indistinguibile da un'altra regione del genoma che non copre la variante. Notiamo che quando \textit{${w_{{t}_{s}}}^{A}$} non viene aggiornato, potrebbe esserci la possibilità di non contare una variante del donatore e riportare un falso negativo: per grandi valori di  \textit{${k}_{c}$} ciò accade raramente. Questa è stata una scelta di progettazione: si preferisce evitare bias dovuti ai \textit{${k}_{c}$}-mer nelle regioni conservate del genoma di riferimento, preferendo non contare l'allele alternato ogni volta che sorgono ambiguità.
+
+Invece di scansionare tutti i \textit{${k}_{c}$}-mer nella read, MALVA usa KMC3 \cite{Kokot2017KMC3} per estrarli in maniera efficiente e effettuare il conteggio delle loro occorrenze: KMC3 è un algoritmo molto efficacie per eseguire il \textit{k-mer counting}. Nel terzo passaggio MALVA analizza l'output di KMC3 e aggiorna di conseguenza i conteggi per ogni \textit{${k}_{c}$}-mer.
+
 
 Nella quarta e ultima fase MALVA utilizza i pesi delle \textit{signature} calcolati nella fase precedente e le informazioni sugli alleli memorizzate nel file VCF in input per determinare il genotipo di ciascuna variante. Vengono estesi gli approcci proposti in letteratura per le varianti bi-alleliche, in particolare quello introdotto in LAVA \cite{shajii2016lava},) alle varianti multi-alleliche, poiché è necessario calcolare la probabilità dei vari possibili genotipi. Data \textit{v} una variante con (\textit{n} - 1) alleli alternati, il numero di possibili genotipi distinti è $\binom{n}{2} + n = \dfrac{n(n+1)}{2}$, rispettivamente un genotipo di riferimento omozigote, $\binom{n}{2}$ genotipi eterozigoti e (\textit{n} - 1) genotipi alternati omozigoti. MALVA calcola la probabilità di ciascun genotipo utilizzando il teorema di Bayes e il teorema della probabilità assoluta. Viene calcolata la probabilità a priori di ogni genotipo e la probabilità condizionata della \textit{coverage} osservata
 dato il genotipo considerato: per computare queste probabilità vengono nuovamente usate le \textit{signature} e i pesi calcolati nelle fasi precedenti. Dopo aver determinato la probabilità di ciascun genotipo, MALVA restituisce in output come genotipo predetto quello con la più alta probabilità.
-
-
-
- \textcolor{red}{ secondo te devo aggiungere dettagli implementativi? come il fatto che nel terzo passaggio usa KMC3 per scansionare la read e fare i conteggi in maniera efficiente... questo equivale anche a dire cosa è KMC3.
- }
-
-%Invece di scansionare tutti i kc-mers nella read, MALVA usa KMC3 per estrarli in modo efficiente e contare le loro occorrenze: nel terzo passaggio si analizza l'output di KMC3 e si aggiornano dii conseguenza i conteggi per ogni ks-mer.
-
-
-\subsubsection{Prestazioni}
- \textcolor{red} {credo questa parte non ci vada, ci sono solo confronti e test con altri tool da mettere alla fine, no singole prestazioni}
- 
 
 
 \end{document}
