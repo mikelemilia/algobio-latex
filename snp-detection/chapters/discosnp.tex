@@ -10,7 +10,7 @@
 \subsection{DiscoSnp\texttt{++}}
 \label{discosnp++}
 
-Il secondo framework che viene presentato è DiscoSnp\texttt{++} \cite{peterlongo2017discosnp++}, rientra nella categoria dei metodi \textit{de-novo}, ed è stato presentato come la nuova versione di \textsc{DiscoSnp} \cite{uricaru2015reference}, framework che si proponeva di individuare SNP isolati eterozigoti e omozigoti. DiscoSnp\texttt{++} è stato reimplementato da zero usando la libreria GATB \cite{drezen2014gatb} e permette di ottenere un tempo di esecuzione più veloce ed un minor consumo di memoria rispetto alla sua precedente versione. È stato progettato per individuare e classificare tutte le tipologie di SNP, compresi piccoli indel provenienti direttamente dalle read sequenziate (FastQ\footnote{\ FastQ è un formato di puro testo in codice ASCII facilmente leggibile, pensato dal Wellcome Sanger Institute per associare ad una sequenza prodotta da una tecnologia NGS, la qualità di ogni sua singola base. È diventato lo standard de facto per la condivisione di dati \cite{cock2010sanger}) prodotti da processi di sequenziamento basati su tecnologia NGS.} o FASTA) senza utilizzare un genoma di riferimento, differentemente da \textsc{DiscoSnp} che era specializzato nella classificazione di una sola tipologia di SNP.
+Il secondo framework che viene presentato è DiscoSnp\texttt{++} \cite{peterlongo2017discosnp++}, rientra nella categoria dei metodi \textit{hybrid}, ed è stato presentato come la nuova versione di \textsc{DiscoSnp} \cite{uricaru2015reference}, framework che si proponeva di individuare SNP isolati eterozigoti e omozigoti. DiscoSnp\texttt{++} è stato reimplementato da zero usando la libreria GATB \cite{drezen2014gatb} e permette di ottenere un tempo di esecuzione più veloce ed un minor consumo di memoria rispetto alla sua precedente versione. È stato progettato per individuare e classificare tutte le tipologie di SNP, compresi piccoli indel provenienti direttamente dalle read sequenziate (FastQ\footnote{\ FastQ è un formato di puro testo in codice ASCII facilmente leggibile, pensato dal Wellcome Sanger Institute per associare ad una sequenza prodotta da una tecnologia NGS, la qualità di ogni sua singola base. È diventato lo standard de facto per la condivisione di dati \cite{cock2010sanger}) prodotti da processi di sequenziamento basati su tecnologia NGS.} o FASTA) senza utilizzare un genoma di riferimento, differentemente da \textsc{DiscoSnp} che era specializzato nella classificazione di una sola tipologia di SNP.
 
 Normalmente DiscoSnp\texttt{++} restituisce gli SNP individuati e classificati nel formato VCF, ma opzionalmente può restituirli dopo averli mappati su un genoma di riferimento. Questo può inizialmente apparire in contrasto con un approccio \textit{reference free}, tuttavia torna particolarmente utile quando si dispone di un genoma di riferimento che non può essere usato per effettuare la chiamata delle varianti tramite tecniche di mappatura ma che può essere usato per posizionare le varianti predette tramite tecniche \textit{de-novo}. In situazioni abbastanza comuni, queste casistiche si presentano quando il genoma di riferimento è stato assemblato male o si sta analizzando un genoma molto distante dalla specie sequenziata. In ogni caso, anche se ci fosse un buon genoma di riferimento, la predizione delle varianti e la genotipizzazione con l'approccio reference free non è influenzato in alcun modo dagli alleli di riferimento.
 
@@ -55,19 +55,19 @@ Una bolla è una biforcazione chiusa di un cammino ed è causata da una singola 
   	\label{fig:dBG_bubble}
 \end{figure}
 
-\paragraph{Strategie per identificare variazioni} È ormai chiaro che l'analisi delle bolle all'interno di un grafo di \textit{de Bruijn} risulta cruciale per riuscire a comprenderne il loro contenuto informativo. In letteratura, \cite{leggett2014reference} presentano alcune strategie basate sui grafi \textit{de Bruijn} per identificare mutazioni.\\
-
-\subparagraph{DF} 
-
-\subparagraph{Topologica}
-
-\subparagraph{Microassembly}
-
-\subparagraph{MLE} Maxumim Likelihood Method
-
-\subparagraph{Contig Based Graph}
-
-\textcolor{red}{Credo sia troppo aggiungere questa parte}
+%\paragraph{Strategie per identificare variazioni} È ormai chiaro che l'analisi delle bolle all'interno di un grafo di \textit{de Bruijn} risulta cruciale per riuscire a comprenderne il loro contenuto informativo. In letteratura, \cite{leggett2014reference} presentano alcune strategie basate sui grafi \textit{de Bruijn} per identificare mutazioni.\\
+%
+%\subparagraph{DF} 
+%
+%\subparagraph{Topologica}
+%
+%\subparagraph{Microassembly}
+%
+%\subparagraph{MLE} Maxumim Likelihood Method
+%
+%\subparagraph{Contig Based Graph}
+%
+%\textcolor{red}{Credo sia troppo aggiungere questa parte}
 
 
 \subsubsection{Struttura dati di DiscoSnp\texttt{++}}
@@ -133,4 +133,7 @@ min\left( like_{0/0},like_{1/1},like_{0/1} \right) \Rightarrow 0/0\ ,1/1\ ,0/1
 Questi calcoli si basano sul parametro \textit{err}, che rappresenta la probabilità che una read venga mappata su un allele erroneamente, e il genotipo che presenta la probabilità più alta viene assegnato. Finito il processo viene generato un file contenente le informazioni legate al FASTA prodotto dal secondo modulo.
 
 \paragraph{Modulo 4} Questo ultimo modulo, genera il file VCF delle varianti predette. Se nessun genoma di riferimento è fornito, questo modulo si limita a cambiare il formato da FASTA a VCF dei file prodotti dai moduli 2 e 3. Altimenti, utilizzando BWA-mem le mutazioni predette vengono mappate sul genoma di riferimento e questo permette di localizzare ogni variante nel genoma. Se una variante ha più di una posizione ottima di mappatura, ne viene scelta una randomica (ma viene comunque segnalata la presenza di possibili mappature multiple in un campo del file VCF).
+
+\subsubsection{Prestazioni}
+
 \end{document}
