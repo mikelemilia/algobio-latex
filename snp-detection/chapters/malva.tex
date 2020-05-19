@@ -30,6 +30,7 @@ Sia \textit{G} l'insieme di tutti i genomi codificati da un file VCF V e sia \te
 
 \end{definition}
 
+\noindent
 Intuitivamente, la firma dell'allele \textit{a} di una variante \textit{v} è il \textit{k}-mer centrato in \textit{a} (che quindi contiene \textit{a} in posizione centrale) in qualche genoma \textit{g} che include \textit{a}. A seconda dei genomi codificati dal file VCF, in particolare, se sono note altre varianti a meno di \textit{k} basi di distanza dall'allele, esso potrebbe avere più firme: la definizione quindi ammette la presenza di alleli di più varianti in una sola firma, consentendo a MALVA di gestire varianti che sono vicine. Inoltre, se la stringa di basi che rappresenta \textit{a} è più lunga di \textit{k}, non esiste un\textit{k}-mer che può essere centrato in \textit{a}: in questo caso, la firma è l'insieme delle sue sottostringhe di lunghezza \textit{k}. L'insieme di tutte le possibili firme di un allele \textit{a} viene chiamato SIGN(\textit{a}) e rappresenta tutte le regioni del genoma in cui l'allele appare nei genomi codificati dal file VCF di input.
 
 MALVA , nel corso del procedimento per determinare il genotipo delle varianti, sfrutta 3 set: REFSIG, che contiene le firme di alleli di riferimento, ALTSIG, che contiene firme di alleli alternati, e REPCTX che memorizza il contesto attorno ad alcune firme di alleli alternati che compaiono anche in altre regioni del genoma (si parlerà più in dettaglio nella prossima sezione del significato di questi set e del loro impiego); in questa sezione, vogliamo concentrarci sui dettagli implementativi di questi set.
@@ -55,6 +56,7 @@ Nella sottostante Figura \ref{fig:malva} è riportata graficamente la pipeline d
   	\label{fig:malva}
 \end{figure}
 
+\noindent
 Il metodo principale è composto da quattro fasi.
 
 Nella prima fase si calcola l'insieme delle firme di lunghezza \textit{${k}_{s}$} di tutti gli alleli alternati di tutte le varianti nel file VCF che vengono memorizzate nell'insieme ALTSIG. Le firme degli alleli di riferimento vengono invece calcolate e memorizzate in un altro set chiamato REFSIG. Quindi, vengono memorizzati due pesi per ogni \textit{${k}_{s}$}-mer \textit{t} di una firma: \textit{${w_{t}}_{A}$} rappresenta il numero di occorrenze di \textit{t} nella \textit{signature} di un allele alternato e \textit{${w_{t}}_{R}$} nella \textit{signature} di un allele di riferimento. Nel costruire le firme di un allele bisogna controllare anche tutti gli alleli delle varianti nel raggio di $\lfloor \frac{ {{{k}_{s}} }}{2}  \rfloor$: usando il file VCF vengono ricostruite le sequenze in base alle informazioni sul genotipo che include. 
