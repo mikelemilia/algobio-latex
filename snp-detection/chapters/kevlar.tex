@@ -48,21 +48,24 @@ $$S_L = log \left(L\left(dn=1\right)\right) - max\left\lbrace log\left(L\left(ih
 
 \noindent
 \\
-dove $L\left(dn=1\right)$ è la probabilità che sia presente una nuova mutazione, $L\left(ih=1\right)$ è la probabilità che la mutazione sia ereditata e $L\left(fp=1\right)$ è la probabilità che una nuova mutazione possa essere un falso positivo e sono calcolate nel seguente modo:
+dove $L\left(dn=1\right)$ è la probabilità che sia presente una nuova mutazione, $L\left(ih=1\right)$ è la probabilità che la mutazione sia ereditata e $L\left(fp=1\right)$ è la probabilità che una nuova mutazione possa essere un falso positivo.
 
-\begin{align*}
-L\left(dn=1\right) & = P\left( A_c,A_m, A_f \ | \ dn = 1 \right)\\
- & = P\left( A_c,A_m, A_f \ | \ v_c = 0/1, v_m = 0/0, v_f = 0/0 \right)\\
- & = P\left( A_c \ | \ v_c = 0/1 \right) P\left( A_m \ | \ v_m = 0/0 \right) P\left( A_f \ | \ v_f = 0/0 \right)
-\\ \\
-L\left(fp=1\right) & = P\left( A_c,A_m, A_f \ | \ v_c = 0/0, v_m = 0/0, v_f = 0/0 \right)
-\end{align*}
-
-\begin{align*}
-L\left(ih=1\right) & = P\left( A_c,A_m, A_f \ | \ ih = 1 \right)\\
- & \approx \prod_{i=1}^n P\left( A_{c_i},A_{m_i}, A_{f_i} \ |\ ih = 1 \right)\\
- & = \prod_{i=1}^n \frac{P\left( ih = 1 \ | \ A_{c_i},A_{m_i}, A_{f_i} \right) P\left( A_{c_i},A_{m_i}, A_{f_i} \right)}{P\left( ih=1\right)}\\
-  & = \prod_{i=1}^n \frac{P\left( A_{c_i},A_{m_i}, A_{f_i} \right)}{P\left( ih=1\right)} \times P\left( ih = 1 \ | \ A_{c_i},A_{m_i}, A_{f_i} \right)
-\end{align*}
+%e sono calcolate nel seguente modo:
+%
+%\begin{align*}
+%L\left(ih=1\right) & = P\left( A_c,A_m, A_f \ | \ ih = 1 \right)\\
+% & \approx \prod_{i=1}^n P\left( A_{c_i},A_{m_i}, A_{f_i} \ |\ ih = 1 \right)\\
+% & = \prod_{i=1}^n \frac{P\left( ih = 1 \ | \ A_{c_i},A_{m_i}, A_{f_i} \right) P\left( A_{c_i},A_{m_i}, A_{f_i} \right)}{P\left( ih=1\right)}\\
+%  & = \prod_{i=1}^n \frac{P\left( A_{c_i},A_{m_i}, A_{f_i} \right)}{P\left( ih=1\right)} \times P\left( ih = 1 \ | \ A_{c_i},A_{m_i}, A_{f_i} \right)
+%\end{align*}
+%
+%\begin{align*}
+%L\left(dn=1\right) & = P\left( A_c,A_m, A_f \ | \ dn = 1 \right)\\
+% & = P\left( A_c,A_m, A_f \ | \ v_c = 0/1, v_m = 0/0, v_f = 0/0 \right)\\
+% & = P\left( A_c \ | \ v_c = 0/1 \right) P\left( A_m \ | \ v_m = 0/0 \right) P\left( A_f \ | \ v_f = 0/0 \right)
+%\end{align*}
+%\begin{align*}
+%L\left(fp=1\right) & = P\left( A_c,A_m, A_f \ | \ v_c = 0/0, v_m = 0/0, v_f = 0/0 \right)
+%\end{align*}
 
 \end{document}
