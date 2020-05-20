@@ -21,7 +21,7 @@ Nella figura \ref{fig:kevlar_pipeline} è riportato il workflow dell'algoritmo d
 \begin{figure}[ht!]
 	\centering
   	\captionsetup{justification=centering}
-  	\includegraphics[scale=.27]{images/kevlar_pipeline.png}
+%  	\includegraphics[scale=.27]{images/kevlar_pipeline.png}
   	\caption{}
   	\label{fig:kevlar_pipeline}
 \end{figure}
@@ -42,12 +42,14 @@ Se sono presenti più sequenze obiettivo, viene mantenuto solo l'allineamento co
 Prima di chiamare la variante, Kevlar allinea eventuali spazi vuoti all'estremità destra dell'allineamento per ridurre al minimo il numero di operazioni di allineamento. Successivamente, \textcolor{red}{ispeziona il percorso di allineamento} (rappresentato come una stringa \texttt{CIGAR}) \textcolor{red}{di ciascun allineamento} e verifica la corrispondenza con i pattern previsti. Allineamenti corrispondenti al pattern \verb|ˆ(\d+[DI])?\d+M(\d+[DI])?$| sono classificati come SNV e il blocco ``match" dell'allineamento viene scansionato per discrepanze tra il contig e l'obiettivo di riferimento. Qualsiasi discrepanza è segnalata come variante a singolo nucleotide. Gli allineamenti che corrispondono al pattern \verb|ˆ(\d+[DI])?\d+M\d+[ID]\d+M(\d+[DI])?$| sono invece classificati come indel. Oltre a segnalare il divario interno di questo allineamento come un indel, i blocchi ``match" fiancheggianti sono
 scansionati anche per discrepanze tra il contig e il target da segnalare come putativi SNV. Qualsiasi allineamento che non corrisponde ai due pattern sopra descritti è designato come ``\texttt{no-call}'' ovvero non interpretabile, ed elencata nell'output con il contig corrispondente. 
 
-\paragraph{Step 5} Per assegnare un punteggio e classificare le nuove mutazioni, viene utilizzato il seguente modello probabilistico:
+\paragraph{Step 5} 
+
+Per assegnare un punteggio e classificare le mutazioni \textit{de novo}, viene utilizzato un modello probabilistico che considera la frequenza dei \textit{k}-mer interessanti per calcolare la probabilità che siano \textit{de novo}, ereditati o semplicemente dei falsi positivi. Utilizzando queste probabilità, viene calcolato un punteggio per ogni mutazione \textit{de novo} tramite dei rapporti di probabilità e sulla base di questi ultimi viene calcolato tramite euristica un punteggio utile a classificare le mutazioni predette. Formalmente, l'euristica che sta alla base del calcolo del punteggio assegnato ad ogni variante è la seguente: \\
 $$S_L = log \left(L\left(dn=1\right)\right) - max\left\lbrace log\left(L\left(ih=1\right)\right), log\left(L\left(fp=1\right)\right)\right\rbrace$$
 \noindent
 \\
 dove $L\left(dn=1\right)$ è la probabilità che sia presente una nuova mutazione, $L\left(ih=1\right)$ è la probabilità che la mutazione sia ereditata e $L\left(fp=1\right)$ è la probabilità che una nuova mutazione possa essere un falso positivo.
-\textcolor{red}{io spiegherei un po' meglio qui, okay, assegna il punteggio e quindi? no con formule matematiche ma con le parole}
+%\textcolor{red}{io spiegherei un po' meglio qui, okay, assegna il punteggio e quindi? no con formule matematiche ma con le parole}
 
 %e sono calcolate nel seguente modo:
 %
