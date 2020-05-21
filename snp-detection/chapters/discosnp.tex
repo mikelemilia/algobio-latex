@@ -112,28 +112,26 @@ Siamo ora pronti ad analizzare gli algoritmi che vengono implementati all'intern
 
 \paragraph{Modulo 3} Per mantenere basso l'utilizzo della RAM, nessun'altra informazione oltre al \textit{k}-mer viene memorizzata nel \textit{dBG}; per questo motivo le varianti trovate dal modulo precedente non hanno nessuna informazione in merito alla frequenza di ogni \textit{k}-mer nei dataset iniziali. Perciò, questo modulo si occupa di mappare le read iniziali sulle sequenze delle mutazioni trovate, in modo da determinare la copertura delle read per allele e per ogni variante dentro i dataset. Oltre a queste statistiche, dipendentemente dal numero di dataset (tipicamente $\geq2$) confrontati, viene calcolato il rank di ogni mutazione (coefficiente Phi della tabella di contingenza dei conteggi delle read \textcolor{red}{forse qui ci va una nota}) nel seguente modo: $max\left( \binom{m}{2}\sqrt{\frac{\chi^2}{n}}\ \right)$, con \textit{n} somma della frequenza della read, ed \textit{m} numero dei dataset. \textcolor{red}{Opzionalmente può inoltre essere predetto per ogni mutazione predetta e per ogni dataset genotipo (solo se i dataset corrispondono ad un organismo diploide)}. I genotipi vengono dedotti indipendentemente per ogni organismo, tramite la copertura delle read per allele. Per fare ciò, le probabilità dei tre possibili genotipi (omozigote 0/0 - 1/1 o eterozigote 0/1  \textcolor{red}{io non ho mai scritto 0/0 e co}) vengono calcolati sulla base del seguente modello binomiale:  \textcolor{red}{come ho già detto valuterei la possibilità di togliere questi e spiegare a grandi linee la parte probabilistica, già nelle sezioni precedenti sei stato dettagliato}.
 
-\begin{equation}
-like_{0/0} = -10\log_{10}{\left( (1-err)^{c_u} \times err^{c_l} \times C^{c_u}_{c_u + c_l} \times \frac{1-prior}{2} \right)}
-\end{equation}
-
-\begin{equation}
-like_{1/1} = -10\log_{10}{\left( err^{c_u} \times (1-err)^{c_l} \times C^{c_u}_{c_u + c_l} \times \frac{1-prior}{2} \right)}
-\end{equation}
-
-\begin{equation}
-like_{0/1} = -10\log_{10}{\left( \left(\frac{1}{2}\right)^{c_u + c_l} \times prior \right)}
-\end{equation}
-
-\begin{equation}
-min\left( like_{0/0},like_{1/1},like_{0/1} \right) \Rightarrow 0/0\ ,1/1\ ,0/1
-\end{equation}
+%\begin{equation}
+%like_{0/0} = -10\log_{10}{\left( (1-err)^{c_u} \times err^{c_l} \times C^{c_u}_{c_u + c_l} \times \frac{1-prior}{2} \right)}
+%\end{equation}
+%
+%\begin{equation}
+%like_{1/1} = -10\log_{10}{\left( err^{c_u} \times (1-err)^{c_l} \times C^{c_u}_{c_u + c_l} \times \frac{1-prior}{2} \right)}
+%\end{equation}
+%
+%\begin{equation}
+%like_{0/1} = -10\log_{10}{\left( \left(\frac{1}{2}\right)^{c_u + c_l} \times prior \right)}
+%\end{equation}
+%
+%\begin{equation}
+%min\left( like_{0/0},like_{1/1},like_{0/1} \right) \Rightarrow 0/0\ ,1/1\ ,0/1
+%\end{equation}
 
 \noindent
 \\
 Questi calcoli si basano sul parametro \textit{err}, che rappresenta la probabilità che una read venga mappata su un allele erroneamente: il genotipo che presenta la probabilità più alta viene assegnato. Finito il processo viene generato un file contenente le informazioni legate al FASTA prodotto dal secondo modulo.
 
 \paragraph{Modulo 4} Quest'ultimo genera il file VCF delle varianti predette. Se nessun genoma di riferimento è fornito, questo modulo si limita a cambiare il formato da FASTA a VCF dei file prodotti dai moduli 2 e 3. Altrimenti, utilizzando BWA-mem le mutazioni predette vengono mappate sul genoma di riferimento e questo permette di localizzare ogni variante nel genoma. Se una variante ha più di una posizione ottima di mappatura, ne viene scelta una random (ma viene comunque segnalata la presenza di possibili mappature multiple in un campo del file VCF).
-
-\subsubsection{Prestazioni}
 
 \end{document}
