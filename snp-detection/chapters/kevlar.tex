@@ -44,7 +44,7 @@ scansionati anche per discrepanze tra il contig e il target da segnalare come pu
 
 \paragraph{Step 5} 
 
-Per assegnare un punteggio e classificare le mutazioni \textit{de novo}, viene utilizzato un modello probabilistico che considera la frequenza dei \textit{k}-mer interessanti per calcolare la probabilità che siano \textit{de novo}, ereditati o semplicemente dei falsi positivi. Utilizzando queste probabilità, viene calcolato un punteggio per ogni mutazione \textit{de novo} tramite dei rapporti di probabilità e sulla base di questi ultimi viene calcolato tramite euristica un punteggio utile a classificare le mutazioni predette. Formalmente, l'euristica che sta alla base del calcolo del punteggio assegnato ad ogni variante è la seguente: \\
+Per assegnare un punteggio e classificare le mutazioni \textit{de novo}, viene utilizzato un modello probabilistico che considera la frequenza dei \textit{k}-mer interessanti per calcolare la probabilità che siano \textit{de novo}, ereditati o semplicemente dei falsi positivi. Utilizzando queste probabilità, viene calcolato un punteggio per ogni mutazione \textit{de novo}, tramite dei rapporti di probabilità, e sulla base di questi ultimi viene calcolato tramite euristica un punteggio utile a classificare le mutazioni predette. Formalmente, l'euristica che sta alla base del calcolo del punteggio assegnato ad ogni variante è la seguente: \\
 $$S_L = log \left(L\left(dn=1\right)\right) - max\left\lbrace log\left(L\left(ih=1\right)\right), log\left(L\left(fp=1\right)\right)\right\rbrace$$
 \noindent
 \\
