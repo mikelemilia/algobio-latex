@@ -55,20 +55,6 @@ Una bolla è una biforcazione chiusa di un cammino ed è causata da una singola 
   	\label{fig:dBG_bubble}
 \end{figure}
 
-%\paragraph{Strategie per identificare variazioni} È ormai chiaro che l'analisi delle bolle all'interno di un grafo di \textit{de Bruijn} risulta cruciale per riuscire a comprenderne il loro contenuto informativo. In letteratura, \cite{leggett2014reference} presentano alcune strategie basate sui grafi \textit{de Bruijn} per identificare mutazioni.\\
-%
-%\subparagraph{DF} 
-%
-%\subparagraph{Topologica}
-%
-%\subparagraph{Microassembly}
-%
-%\subparagraph{MLE} Maxumim Likelihood Method
-%
-%\subparagraph{Contig Based Graph}
-%
-%\textcolor{red}{Credo sia troppo aggiungere questa parte}
-
 
 \subsubsection{Struttura dati di DiscoSnp\texttt{++}}
 \label{dBG_prob}
@@ -110,7 +96,7 @@ Una bolla ramificata si definisce \textit{simmetrica} se più di due cammini pos
 \noindent
 Siamo ora pronti ad analizzare gli algoritmi che vengono implementati all'interno di questo secondo modulo. Il primo algoritmo, attraversando tutti i \textit{k}-mer che presentano un nodo di diramazione destro, li propone inizialmente come potenziali nodi di partenza per bolle che identificano SNP e nel caso non lo siano li propone come potenziali nodi di partenza per bolle che identificano indel. In questo secondo caso, tutte le possibili combinazioni di indel vengono proposte, dato che l'inserimento può avvenire nel cammino inferiore o superiore e può avere una dimensione variabile (non può superare la dimensione massima autorizzata dall'utente). Per ogni \textit{k}-mer (SNP o indel) proposto dall'algoritmo precedente, il secondo algoritmo (ricorsivo) espande congiuntamente due cammini e controlla che i vincoli imposti sui parametri\footnote{\ Tramite i parametri di \textit{branching}, è possibile limitare la ricerca alle sole bolle non ramificate, o alle bolle non ramificate o non simmetriche, o a qualunque tipo di bolla senza restizioni.} di diramazione siano rispettati. Se i due \textit{k}-mer che si stanno espandendo sono identici, allora la bolla è giunta alla fine, altrimenti la ricorsione continua. Qualunque sia il risultato dell'espansione, l'algoritmo controlla l'esistenza di potenziali \textit{k}-mer di chiusura $k\texttt{-}mer_1$ e $k\texttt{-}mer_2$ che possono essere estesi con caratteri differenti $\alpha$ e $\beta$. Processati tutti i nodi proposti, viene generato un file FASTA contenente le mutazioni trovate.
 
-\paragraph{Modulo 3} Per mantenere basso l'utilizzo della RAM, nessun'altra informazione oltre al \textit{k}-mer viene memorizzata nel \textit{dBG}; per questo motivo le varianti trovate dal modulo precedente non hanno nessuna informazione in merito alla frequenza di ogni \textit{k}-mer nei dataset iniziali. Perciò, questo modulo si occupa di mappare le read iniziali sulle sequenze delle mutazioni trovate, in modo da determinare la copertura delle read per allele e per ogni variante dentro i dataset. Oltre a queste statistiche, dipendentemente dal numero di dataset (tipicamente $\geq2$) confrontati, viene calcolato il rank di ogni mutazione (coefficiente Phi della tabella di contingenza dei conteggi delle read \textcolor{red}{forse qui ci va una nota}) nel seguente modo: $max\left( \binom{m}{2}\sqrt{\frac{\chi^2}{n}}\ \right)$, con \textit{n} somma della frequenza della read, ed \textit{m} numero dei dataset. \textcolor{red}{Opzionalmente può inoltre essere predetto per ogni mutazione predetta e per ogni dataset genotipo (solo se i dataset corrispondono ad un organismo diploide)}. I genotipi vengono dedotti indipendentemente per ogni organismo, tramite la copertura delle read per allele. Per fare ciò, le probabilità dei tre possibili genotipi (omozigote 0/0 - 1/1 o eterozigote 0/1  \textcolor{red}{io non ho mai scritto 0/0 e co}) vengono calcolati sulla base del seguente modello binomiale:  \textcolor{red}{come ho già detto valuterei la possibilità di togliere questi e spiegare a grandi linee la parte probabilistica, già nelle sezioni precedenti sei stato dettagliato}.
+\paragraph{Modulo 3} Per mantenere basso l'utilizzo della RAM, nessun'altra informazione oltre al \textit{k}-mer viene memorizzata nel \textit{dBG}; per questo motivo le varianti trovate dal modulo precedente non hanno nessuna informazione in merito alla frequenza di ogni \textit{k}-mer nei dataset iniziali. Perciò, questo modulo si occupa di mappare le read iniziali sulle sequenze delle mutazioni trovate, in modo da determinare la copertura delle read per allele e per ogni variante dentro i dataset. Oltre a queste statistiche, dipendentemente dal numero di dataset (tipicamente $\geq2$) confrontati, viene calcolato il rank di ogni mutazione\footnote{\textcolor{Orange}{\ Il rank di ogni mutazione viene valutato tramite il coefficiente Phi, il quale misura l'associazione tra due variabili binarie. È anche chiamato \textit{Mean Square Contingency Coefficient} usato insieme alle tabelle di contingenza (chiamate anche tabelle a campi incrociati o tabelle a due vie) per riepilogare la relazione tra diverse variabili osservate.}} nel seguente modo: $max\left( \binom{m}{2}\sqrt{\frac{\chi^2}{n}}\ \right)$, con \textit{n} somma della frequenza della read, \textit{m} numero dei dataset e $\chi$ coefficiente Phi della tabella di contingenza dei conteggi delle read. I genotipi vengono dedotti in modo indipendente per ogni organismo, tramite la copertura delle read per allele. Per fare ciò, le probabilità dei tre possibili genotipi (omozigote o eterozigote) vengono calcolati tramite un semplice modello binomiale. Basato sul parametro \textit{err}, che rappresenta la probabilità che una read venga mappata erroneamente su un allele, si assume che questa probabilità sia fissata ($0.01$) e indipendente in ogni osservazione. Il genotipo che presenta la probabilità più alta viene scelto e fornito in output insieme a tutte le altre probabilità calcolate. Finito il processo viene generato un file contenente le informazioni legate al FASTA prodotto dal secondo modulo.
 
 %\begin{equation}
 %like_{0/0} = -10\log_{10}{\left( (1-err)^{c_u} \times err^{c_l} \times C^{c_u}_{c_u + c_l} \times \frac{1-prior}{2} \right)}
@@ -128,10 +114,6 @@ Siamo ora pronti ad analizzare gli algoritmi che vengono implementati all'intern
 %min\left( like_{0/0},like_{1/1},like_{0/1} \right) \Rightarrow 0/0\ ,1/1\ ,0/1
 %\end{equation}
 
-\noindent
-\\
-Questi calcoli si basano sul parametro \textit{err}, che rappresenta la probabilità che una read venga mappata su un allele erroneamente: il genotipo che presenta la probabilità più alta viene assegnato. Finito il processo viene generato un file contenente le informazioni legate al FASTA prodotto dal secondo modulo.
-
-\paragraph{Modulo 4} Quest'ultimo genera il file VCF delle varianti predette. Se nessun genoma di riferimento è fornito, questo modulo si limita a cambiare il formato da FASTA a VCF dei file prodotti dai moduli 2 e 3. Altrimenti, utilizzando BWA-mem le mutazioni predette vengono mappate sul genoma di riferimento e questo permette di localizzare ogni variante nel genoma. Se una variante ha più di una posizione ottima di mappatura, ne viene scelta una random (ma viene comunque segnalata la presenza di possibili mappature multiple in un campo del file VCF).
+\paragraph{Modulo 4} Quest'ultimo modulo genera il file VCF delle varianti predette. Se nessun genoma di riferimento è fornito, questo modulo si limita a cambiare il formato da FASTA a VCF dei file prodotti dai moduli 2 e 3. Altrimenti, utilizzando BWA-mem le mutazioni predette vengono mappate sul genoma di riferimento e questo permette di localizzare ogni variante nel genoma. Se una variante ha più di una posizione ottima di mappatura, ne viene scelta una random (ma viene comunque segnalata la presenza di possibili mappature multiple in un campo del file VCF).
 
 \end{document}
