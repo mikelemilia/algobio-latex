@@ -26,8 +26,8 @@ Nella figura \ref{fig:kevlar_pipeline} è riportato il workflow dell'algoritmo d
   	\label{fig:kevlar_pipeline}
 \end{figure}
 
-\noindent
-\paragraph{Step 1} Prima di poter identificare nuovi \textit{k}-mer, è necessario contare la frequenza di ogni \textit{k}-mer all'interno di ogni genoma. Per fare ciò Kevlar memorizza un conteggio approssimativo dei \textit{k}-mer all'interno di Count-Min sketch, una struttura dati probabilistica simile a un Bloom Filter (vedi Sezione \ref{BloomFilter}) che però opera con una taglia sublineare dell'input, favorendo l'efficienza alla precisione. Viene utilizzata per ogni campione una CM sketch, la cui precisione dipende dalla dimensione e dal numero degli elementi distinti che vengono tracciati. In seguito, con l'utilizzo di una maschera di conteggio, se i \textit{k}-mer sono presenti nei genomi di riferimento e in un genoma di contaminamenti (batteri, virus, ...) sono ignorati.
+\noindent 
+\textbf{Step 1} Prima di poter identificare nuovi \textit{k}-mer, è necessario contare la frequenza di ogni \textit{k}-mer all'interno di ogni genoma. Per fare ciò Kevlar memorizza un conteggio approssimativo dei \textit{k}-mer all'interno di Count-Min sketch, una struttura dati probabilistica simile a un Bloom Filter (vedi Sezione \ref{BloomFilter}) che però opera con una taglia sublineare dell'input, favorendo l'efficienza alla precisione. Viene utilizzata per ogni campione una CM sketch, la cui precisione dipende dalla dimensione e dal numero degli elementi distinti che vengono tracciati. In seguito, con l'utilizzo di una maschera di conteggio, se i \textit{k}-mer sono presenti nei genomi di riferimento e in un genoma di contaminamenti (batteri, virus, ...) sono ignorati.
 
 \paragraph{Step 2} Kevlar scansiona ogni read sequenziata dal probando e richiede le frequenze per campione di ciascun \textit{k}-mer alle Count-Min sketch generate nella fase precedente. Se un \textit{k}-mer è presente con alta frequenza nel genoma figlio ed è assente dai genomi genitori è identificato come "interessante". 
 

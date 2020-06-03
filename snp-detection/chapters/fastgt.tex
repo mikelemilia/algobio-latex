@@ -12,7 +12,9 @@
 
 FastGT \cite{pajuste2017fastgt} è un metodo computazionale che conta le frequenze di \textit{k}-mer unici nei dati delle read del genoma e utilizza queste informazioni per inferire i genotipi di varianti conosciute. FastGT è un tool molto veloce, in grado di rilevare le varianti in un genoma con coverage 30x in meno di 1 ora utilizzando un normale hardware a basso costo. Questo metodo fornisce un database di \textit{k}-mer che può poi essere utilizzato per la genotipizzazione simultanea di circa trenta milioni di SNV (Single-Nucleotide Variant), inclusi più di 23.000 SNV dal cromosoma Y. Attualmente FastGT utilizza solo regioni affidabili del genoma ed è limitato alla chiamata di varianti genomiche note poichè specifici \textit{k}-mer devono essere preselezionati per tutti gli alleli noti; è ideale per una rapida analisi preliminare di un sottoinsieme di marcatori, successivamente seguita dall'analisi completa, quindi non sostituisce la mappatura tradizionale e la chiamata di varianti ma è un metodo complementare che facilita alcuni aspetti delle analisi del genoma.
 
-Il metodo si basa su tre componenti: (1) la procedura per la selezione di \textit{k}-mer unici, (2) la struttura dati personalizzata per l'archiviazione e il conteggio dei \textit{k}-mer direttamente da un file FASTQ\footnote{\ FastQ è un formato di puro testo in codice ASCII facilmente leggibile, pensato dal Wellcome Sanger Institute per associare ad una sequenza prodotta da una tecnologia NGS, la qualità di ogni sua singola base. È diventato lo standard de facto per la condivisione di dati \cite{cock2010sanger} \label{nota:FASTQ} prodotti da processi di sequenziamento basati su tecnologia NGS.} (vedi sezione \ref{AdaptiveRadixTree}) e (3) un metodo basato sulla probabilità progettato per stimare i genotipi dai conteggi dei \textit{k}-mer.
+Il metodo si basa su tre componenti: (1) la procedura per la selezione di \textit{k}-mer unici, (2) la struttura dati personalizzata per l'archiviazione e il conteggio dei \textit{k}-mer direttamente da un file FASTQ\footnote{\ FastQ è un formato di puro testo in codice ASCII facilmente leggibile, pensato dal Wellcome Sanger Institute per associare ad una sequenza prodotta da una tecnologia NGS, la qualità di ogni sua singola base. È diventato lo standard de facto per la condivisione di dati \cite{cock2010sanger} \label{nota:FASTQ} prodotti da processi di sequenziamento basati su tecnologia NGS.} (vedi sezione \ref{AdaptiveRadixTree}) e (3) un modello probabilistico progettato per stimare i genotipi dai conteggi dei \textit{k}-mer.
+
+FastGT non ha attualmente alcuna capacità di chiamare varianti \textit{de novo} ed è limitato alla chiamata di sottoinsiemi di varianti predefinite, ma non non si limita all'identificazione di SNV: può rilevare qualsiasi variante nota che può essere associata a un \textit{k}-mer unico e specifico per variante. %Inoltre FastGT è stato utilizzato solo con i dati di sequenziamento Illumina, ma in linea di principio è utilizzabile con altre tecnologie di sequenziamento.
 
 \subsubsection{Adaptive radix tree}
 \label{AdaptiveRadixTree}
@@ -23,8 +25,9 @@ Per ottenere tali miglioramenti, il \textit{trie} viene \textit{adattato}. Norma
 
 Inoltre, con valori di span elevati, un \textit{trie} risulta essere molto schiacciato (in altezza) e con nodi molto grandi per i quali viene allocato molto spazio per i puntatori ai nodi figli, anche se non utilizzati. Per questa ragione, il secondo ``adattamento", riguardante la compressione orizzontale che \cite{leis2013art} propongono sono gli Adaptive Nodes, che utilizzano strutture dati dinamiche per tener conto dei figli, allocando meno spazio quando il numero di figli è piccolo. Un Adaptive Node, a seconda del numero di nodi figlio, si trova quindi tra quattro configurazioni, ottimizzate per un diverso numero di figli e adattate di conseguenza quando le chiavi vengono inserite o eliminate (ad esempio la configurazione più compatta, \texttt{Nodo4}, può avere fino a quattro figli). Ogni nodo presenta un'intestazione che memorizza il tipo di nodo, il numero di figli e la variabile prefisso, che contiene il percorso compresso (vedi \cite{leis2013art} per maggiori dettagli sulla struttura delle configurazioni). Infine, vengono utilizzate le  \textit{single-value leaves}, ovvero un tipo di nodo foglia aggiuntivo che memorizza un valore.
 
-All'interno dell'ART si possono effettuare operazioni di (1) ricerca, per controllare la presenza di un elemento confrontando le chiavi scendendo nell'albero e di (2) eliminazione, nella quale il nodo foglia identificato dalla chiave di ricerca viene rimosso da un nodo interno, controllando poi se necessario applicare la compressione verticale ed inserzione.
+All'interno dell'ART si possono effettuare operazioni di ricerca, per controllare la presenza di un elemento confrontando le chiavi scendendo nell'albero e di eliminazione, nella quale il nodo foglia identificato dalla chiave di ricerca viene rimosso da un nodo interno, controllando poi se necessario applicare la compressione verticale ed inserzione.
 
+Il consumo di spazio dell'ART dipende dalla distribuzione delle chiavi: chiavi dense rappresentano il caso migliore e possono essere archiviate in modo efficiente, anche utilizzando un intervallo ampio e senza nodi adattivi. Quando invece le chiavi sono sparse, molti puntatori di nodi interni sono nulli, il che si traduce in uno spazio sprecato. I nodi adattivi risolvono questi problemi e assicurano che qualsiasi distribuzione delle chiavi venga archiviata in modo compatto, ottimizzando localmente il consumo di spazio in ciascun nodo. Nel caso peggiore, tenendo conto dei nodi adattivi, della lenta espansione e della compressione del percorso, lo spazio occupato dai nodi dipende dalla loro tipologia e dal numero di figli.
 
 \subsubsection{Struttura Dati di FastGT}
 \label{strutturaDatiFastGT}
@@ -34,7 +37,7 @@ L'input di FastGT è costituito da file FASTQ contenente i dati del genoma e da 
 \noindent
 FastGT utilizza un Adaptive Radix Tree (vedi Sezione \ref{AdaptiveRadixTree}) per memorizzare i \textit{k}-mer e i relativi conteggi. Questa struttura dati permette di memorizzare solo i \textit{k}-mer di interesse e le loro frequenze, anziché tutti i possibili \textit{k}-mer del genoma. Inoltre consente un buon compromesso tra il consumo di memoria e la velocità di ricerca. Infatti, data \textit{k} la lunghezza dei \textit{k}-mer inseriti nell'albero, nel caso peggiore sia le ricerche che le inserzioni nell'albero hanno complessità \textit{O}(log \textit{k}).
 
-I \textit{k}-mer sono codificati con 2 bit per nucleotide e memorizzati come stringhe di bit. I rami possono dividere la stringa sia tra diversi nucleotidi sia all'interno di un nucleotide. Il \textit{trie} è composto da numeri interi a 64 bit, ciascuno interpretato o come parte unica più a destra di un \textit{k}-mer (foglia) o come puntatore al ramo secondario successivo. L'albero non ha rami nel senso stretto del termine, ma i primi bit sono usati per selezionare il sottoalbero successivo. I nodi e le foglie sono interi a 64 bit. La Figura seguente \ref{fig:art} è un esempio di codifica di un 20-mer.
+I \textit{k}-mer sono codificati con 2 bit per nucleotide e memorizzati come stringhe di bit. I rami possono dividere la stringa sia tra diversi nucleotidi sia all'interno di un nucleotide. Il \textit{trie} è composto da numeri interi a 64 bit, ciascuno interpretato o come parte unica più a destra di un \textit{k}-mer (foglia) o come puntatore al ramo secondario successivo. L'albero non ha rami nel senso stretto del termine, ma i primi bit sono usati per selezionare il sottoalbero successivo. I nodi e le foglie sono interi a 64 bit. La Figura seguente \ref{fig:art} è un esempio.
 
 \begin{figure}[h!]
 	\centering
@@ -47,7 +50,7 @@ I \textit{k}-mer sono codificati con 2 bit per nucleotide e memorizzati come str
 
 \subsubsection{Algoritmo di FastGT}
 
-Nella figura seguente è riportata la pipeline dell'algoritmo di FastGT (Figura \ref{fig:fastgt})
+Nella figura seguente è riportata la pipeline dell'algoritmo di FastGT (Figura \ref{fig:fastgt}).
 
  \begin{figure}[h!]
 	\centering
@@ -57,6 +60,7 @@ Nella figura seguente è riportata la pipeline dell'algoritmo di FastGT (Figura 
   	\label{fig:fastgt}
 \end{figure}
 
+\noindent
 Il database delle varianti dei \textit{k}-mer univoci viene assemblato identificando tutte le possibili coppie di \textit{k}-mer per ogni variante, che poi vengono sottoposti a diversi passaggi di filtraggio. Le fasi di filtraggio rimuovono varianti per le quali non vengono osservati \textit{k}-mer unici e varianti che producono genotipi non canonici (non diploidi negli autosomi e non aploidi nei cromosomi X e Y maschili) in una serie di test sequenziati da individui. La procedura di filtraggio è la seguente:
 
 \paragraph{Step 1} Partendo dagli SNV validati e gli indel comuni del database dbSNP (gli indel vengono usati solo per testare l'unicità dei \textit{k}-mer, non vengono inclusi nel database delle varianti), per ogni SNV bi-allelico vengono create due sequenze attorno alla posizione dell'SNV: la sequenza del genoma di riferimento e quella corrispondente all'allele alternato. I \textit{k}-mer vengono filtrati e vengono eliminati i \textit{k}-mer che coprono un determinato SNV e che contengono altri SNV o indel noti, per rimuovere ogni possibile sovrapposizione: si vuole evitare di complicare gli algoritmi che effettuano il conteggio che dovrebbero tener conto di molteplici combinazioni di alleli SNV vicini. 
