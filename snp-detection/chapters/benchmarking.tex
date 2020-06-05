@@ -44,6 +44,19 @@ Un ulteriore test eseguito, analizza in che modo la coverage del sequenziamento 
 
 L'ultimo parametro esaminato è la lunghezza dei \textit{k}-mer: FastGT imposta k = 25, anche se è in grado di usare anche le lunghezze tra 16 e 32. Viene dimostrato che, utilizzando \textit{k}-mer più corti di 20 nucleotidi, un numero piuttosto elevato di marcatori viene eliminato dal set nelle fasi di filtraggio, ma il numero di marcatori utilizzabili non aumenta in modo significativo per k maggiore di 24.
 
+\subsubsection{Analisi di COBASI}
+
+\cite{gomez-romero2018cobasi} per quantificare le prestazioni di COBASI, hanno svolto numerose simulazioni per identificare i parametri ottimi su lavorare e ad ognuna hanno assegnato un punteggio prestazionale tramite l'utilizzo dell'AUPR. Tra i parametri analizzati ci sono le \textit{coverage}, la lunghezze dei \textit{k}-mer, le \textit{coverage} minime per i CS firma, i valori di soglia RCI e altri.
+
+Durante le simulazioni, \cite{gomez-romero2018cobasi} hanno introdotto degli SNV in posizioni randomiche nel cromosoma 12 con un tasso di mutazione di 0.001. Eseguendole, hanno osservato che alcuni parametri erano indipendenti dalla \textit{coverage} mentre altri variavano sensibilmente dipendentemente da essa. Su tutte le \textit{coverage} testate, da 35x a 100x, la migliore dimensione del \textit{k}-mer è 30 e il miglior rapporto tra le \textit{coverage} dei CS è 2, e i migliori valori di soglia RCI sono 0.2 o 0.3, infatti tramite questi parametri è stato ottenuto un basso valore di falsi positivi (FP) senza aumentare in modo significativo i falsi negativi (FN). 
+
+Al contrario,  con una \textit{coverage} di 35x, la \textit{coverage} minima per i CS firma è 5, l'estensione ottimale per gli allineamenti che contengono solo PrevCS è 5bp e il numero minimo di allineamenti con entrambi i CS è 2. Con una \textit{coverage} di 100x, invece, la \textit{coverage} minima per i CS firma è 10, l'estensione ottimale per gli allineamenti che contengono solo PrevCS è 5bp o 10bp e il numero minimo di allineamenti totali con entrambi i CS è 3 o 4. 
+
+Una volta che i parametri ottimi sono stati identificati, \cite{gomez-romero2018cobasi} per confrontare le prestazioni di COBASI, hanno utilizzato una pipeline standard \textit{alignment-based} che combinava BWA, Picard Tools e GATK per la chiamata degli SNV. Il confronto è stato eseguito su una \textit{coverage} di 100x e seppur l'AUPR di COBASI variava da $0.94$ a $0.96$ contro lo $0.99$ della pipeline standard, il tempo necessario per ottenere un elenco di SNV dalle read non elaborate è stato incredibilmente ridotto, da più di 30 ore nel caso della pipeline standard basata sull'allineamento a meno di 6 ore richieste da COBASI.
+
+Sono inoltre state misurate le prestazioni relative alla scoperta SNV \textit{de novo} usando simulazioni sul trio genitore-figlio. Un trio di genomi genitore-figlio è stato creato in seguito all'eredità mendeliana insieme a un numero limitato di varianti \textit{de novo} (con una mediana di 35 SNV \textit{de novo} per simulazione). La \textit{coverage} è stata scelta per assomigliare ai dati sperimentali sul sequenziamento: 35x per i genitori e 100x per il figlio. L'esperimento è stato ripetuto svariate volte, in modo da poter calcolare robusti valori di precisione della mediana. La precisione della mediana ottenuta è stata $1.0$ e il richiamo mediano era $0,91$ con una mediana di 32 veri positivi (TP), 3 FN e 0 FP.
+
+\textcolor{red}{Finire, non ci sono dati .-.}
 
 \subsubsection{Confronto tra Kevlar e DiscoSNP\texttt{++}}
 
@@ -54,15 +67,6 @@ Le suddette simulazioni, e di conseguenza la precisione di Kevlar, sono state co
 L'analisi verrà suddivisa in capacità di predire correttamente SNV e indel di dimensioni variabili. Inizialmente con una \textit{coverage} bassa (10x) entrambi i framework producono una chiamata degli SNV molto scarsa e in generale soffrono di bassa sensibilità (non prevedendo molte varianti vere) e di scarsa specificità (prevedendo molte varianti false), d'altro canto rispetto alla predizione degli indel DiscoSNP\texttt{++} risulta essere il più preciso ottenendo chiamate migliori per indel corti ($\sim 33\%$) con alta specificità. La capacità di Kevlar di rilevare accuratamente indels diventa evidente con una \textit{coverage} di 20x, infatti supera DiscoSNP\texttt{++} (che si stabilizza a ($\sim 50\%$) ottenendo una buona sensibilità nell'individuazione di SNV e indel ($\sim 75-78\%$) ma una discreta specificità solo per indel $>$100bp. 
 
 A livelli di \textit{coverage} più elevati (30x, 50x), Kevlar raggiunge costantemente le massime prestazioni in tutti i tipi di variante. In particolare, recupera più del $90\%$ delle varianti vere mentre facendo pochissime previsioni false su tutti i tipi di variante. DiscoSNP\texttt{++} d'altro canto non presenta notevoli miglioramenti prestazionali all'aumentare della \textit{coverage}.
-
-\subsubsection{Analisi di COBASI}
-\textcolor{red}{Mikele... io farei sti capitoletti... un minimo, dato che è stato fatto anche per gli altri...}
-
-\subsubsection{Analisi di DiscoDiscoSNP\texttt{++}}
-\textcolor{red}{Mikele... io farei sti capitoletti... un minimo, dato che è stato fatto anche per gli altri...}
-
-
-
 
 \subsubsection{Confronto tra Malva, Vargeno e DiscoSNP\texttt{++}}
 
