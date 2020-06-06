@@ -14,7 +14,7 @@ Il secondo framework che viene presentato è DiscoSnp\texttt{++} \cite{peterlong
 
 Normalmente DiscoSnp\texttt{++} restituisce gli SNP individuati e classificati nel formato VCF, ma opzionalmente può restituirli dopo averli mappati su un genoma di riferimento. Questo può inizialmente apparire in contrasto con un approccio \textit{reference free}, tuttavia torna particolarmente utile quando si dispone di un genoma di riferimento che non può essere usato per effettuare la chiamata delle varianti tramite tecniche di mappatura ma che può essere usato per posizionare le varianti predette tramite tecniche \textit{de-novo}. In situazioni abbastanza comuni, queste casistiche si presentano quando il genoma di riferimento è stato assemblato male o si sta analizzando un genoma molto distante dalla specie sequenziata. In ogni caso, anche se ci fosse un buon genoma di riferimento, la predizione delle varianti e la genotipizzazione con l'approccio reference free non sono influenzate in alcun modo dagli alleli di riferimento.
 
-\subsubsection{Una struttura dati per identificare varianti: il grafo di \textit{de Bruijn}}
+\subsubsection{Grafo di \textit{de Bruijn}}
 \label{dBG}
 
 I grafi di \textit{de Bruijn} sono la struttura dati su cui si basano la maggior parte dei tool \textit{reference free} per la  ricerca di mutazioni (SNP) senza l'utilizzo dell'allinemento, in quanto eliminano la necessità di un genoma di riferimento e utilizzando direttamente i confronti della sequenza grezza.
