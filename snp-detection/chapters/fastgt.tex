@@ -14,7 +14,6 @@ FastGT \cite{pajuste2017fastgt} è un metodo computazionale che conta le frequen
 
 Il metodo si basa su tre componenti: (1) la procedura per la selezione di \textit{k}-mer unici, (2) la struttura dati personalizzata per l'archiviazione e il conteggio dei \textit{k}-mer direttamente da un file FASTQ\footnote{\ FastQ è un formato di puro testo in codice ASCII facilmente leggibile, pensato dal Wellcome Sanger Institute per associare ad una sequenza prodotta da una tecnologia NGS, la qualità di ogni sua singola base. È diventato lo standard de facto per la condivisione di dati \cite{cock2010sanger} \label{nota:FASTQ} prodotti da processi di sequenziamento basati su tecnologia NGS.} (vedi sezione \ref{AdaptiveRadixTree}) e (3) un modello probabilistico progettato per stimare i genotipi dai conteggi dei \textit{k}-mer.
 
-
 \subsubsection{Adaptive radix tree}
 \label{AdaptiveRadixTree}
 
@@ -47,7 +46,7 @@ FastGT utilizza un Adaptive Radix Tree (vedi Sezione \ref{AdaptiveRadixTree}) pe
 
 \subsubsection{Algoritmo di FastGT}
 
-In Figura \ref{fig:fastgt} è riportata la pipeline dell'algoritmo di FastGT.
+Il database delle varianti dei \textit{k}-mer univoci viene assemblato identificando tutte le possibili coppie di \textit{k}-mer per ogni variante, che poi vengono sottoposti a diversi passaggi di filtraggio. Le fasi di filtraggio rimuovono varianti per le quali non vengono osservati \textit{k}-mer unici e varianti che producono genotipi non canonici (non diploidi negli autosomi e non aploidi nei cromosomi X e Y maschili) in una serie di test sequenziati da individui. La procedura di filtraggio, che si può notare nella pipeline riportata in Figura \ref{fig:fastgt}, è la seguente:
 
  \begin{figure}[h!]
 	\centering
@@ -56,9 +55,6 @@ In Figura \ref{fig:fastgt} è riportata la pipeline dell'algoritmo di FastGT.
   	\caption{Pipeline, FastGT.}
   	\label{fig:fastgt}
 \end{figure}
-
-\noindent
-Il database delle varianti dei \textit{k}-mer univoci viene assemblato identificando tutte le possibili coppie di \textit{k}-mer per ogni variante, che poi vengono sottoposti a diversi passaggi di filtraggio. Le fasi di filtraggio rimuovono varianti per le quali non vengono osservati \textit{k}-mer unici e varianti che producono genotipi non canonici (non diploidi negli autosomi e non aploidi nei cromosomi X e Y maschili) in una serie di test sequenziati da individui. La procedura di filtraggio è la seguente:
 
 \paragraph{Step 1} Partendo dagli SNV validati e gli indel comuni del database dbSNP (gli indel vengono usati solo per testare l'unicità dei \textit{k}-mer, non vengono inclusi nel database delle varianti), per ogni SNV bi-allelico vengono create due sequenze attorno alla posizione dell'SNV: quella del genoma di riferimento e quella corrispondente all'allele alternato. I \textit{k}-mer vengono filtrati e vengono eliminati i \textit{k}-mer che coprono un determinato SNV e che contengono altri SNV o indel noti, per rimuovere ogni possibile sovrapposizione: si vuole evitare di complicare gli algoritmi che effettuano il conteggio che altrimenti dovrebbero tener conto di molteplici combinazioni di alleli SNV vicini. 
 
@@ -74,7 +70,6 @@ La genotipizzazione viene eseguita leggendo le read non elaborate e contandone l
 
 \texttt{gmer\_caller} utilizza il teorema Bayes per chiamare i genotipi a partire dalle frequenze dei \textit{k}-mer, calcolando la probabilità di ciascun genotipo e assegnando a ciascuna variante il genotipo più probabile. Le distribuzioni di frequenza degli alleli (di riferimento e alternativi) sono modellate da una distribuzione binomiale negativa con media uguale al prodotto della coverage e la vera molteplicità del \textit{k}-mer nel genoma; il modello consente di stimare il numero di copie più probabile per entrambi gli alleli. 
 
-\textcolor{red}{Infine, il genere dell'individuo viene determinato automaticamente dai dati di sequenziamento utilizzando, la frequenza media dei marker dal cromosoma X (chrX): se l'individuo è femmina, nel processo di chiamata viene utilizzato solo il modello autosomico (per chiamare gli SNV sia negli autosomi che nel cromosoma X) e non vengono chiamati i marcatori del cromosoma Y (chrY), per gli uomini un ulteriore modello aploide del classificatore di Bayes è addestrato per chiamare i genotipi degli SNV negli autosomi e anche nei cromosomi sessuali.}
-
+%\textcolor{red}{Infine, il genere dell'individuo viene determinato automaticamente dai dati di sequenziamento utilizzando, la frequenza media dei marker dal cromosoma X (chrX): se l'individuo è femmina, nel processo di chiamata viene utilizzato solo il modello autosomico (per chiamare gli SNV sia negli autosomi che nel cromosoma X) e non vengono chiamati i marcatori del cromosoma Y (chrY), per gli uomini un ulteriore modello aploide del classificatore di Bayes è addestrato per chiamare i genotipi degli SNV negli autosomi e anche nei cromosomi sessuali.}
 
 \end{document}
