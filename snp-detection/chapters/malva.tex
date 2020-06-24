@@ -17,7 +17,7 @@ MALVA è un metodo basato su \textit{word}: a ciascun allele, di ciascuna varian
 \cite{bernardini2019malva} dichiarano che è un tool rapido, leggero e privo di allineamento per genotipizzare varianti note e richiede un ordine di grandezza di tempo in meno per genotipizzare un donatore rispetto agli strumenti basati sull'allineamento, fornendo una precisione simile. Anche se le varianti multi-alleliche sono più difficili da genotipizzare rispetto a quelle bi-alleliche, riesce ad ottenere alta precisione. In merito a indel, MALVA fornisce risultati migliori rispetto agli strumenti più ampiamente adottati per rilevarli. 
 
 
-\subsubsection{Definizioni e Struttura Dati di MALVA}
+\subsubsection{Definizioni e Struttura Dati}
 
 Il framework prende in input il genoma di riferimento, una lista di varianti e un set di read e restituisce in output un file VCF contenente il genotipo più probabile per ogni variante. Le varianti sono codificate in un file VCF (Variant Calling Format): ogni riga del file definisce una variante e contiene le relative informazioni; le varianti considerate sono SNP e indel.
 
@@ -45,7 +45,7 @@ Intuitivamente, la firma dell'allele \textit{a} di una variante \textit{v} è il
 Nel corso del procedimento per determinare il genotipo delle varianti, le firme vengono salvate in 3 set: REFSIG, che contiene le firme di alleli di riferimento, ALTSIG, che contiene firme di alleli alternati, e REPCTX che memorizza il contesto attorno ad alcune firme di alleli alternati che compaiono identiche anche in altre regioni del genoma. ALTSIG è costruito con un Bloom Filter ed una singola funzione di hash\footnote{\ Nota \vref{nota:OHBF}.}, in quanto, una volta che tutte le firme di tutti gli alleli alternati sono state aggiunte ad ALTSIG, il set viene utilizzato solo per verificare se alcuni \textit{k}-mer fanno parte di una firma. Una volta costruito questo set, in base al numero di 1 nel Bloom Filter (ovvero al numero di \textit{k}-mer in ALTSIG) viene associato un array di interi in cui verranno salvati i pesi (contatori) dei \textit{k}-mer; di fatto, l'uso di una singola funzione hash consente di archiviare i pesi in modo efficiente per ogni \textit{k}-mer. Allo stesso modo, anche REPCTX viene implementato tramite un Bloom Filter ad una singola funzione hash. Viceversa, REFSIG è implementato come una semplice tabella hash, poiché il numero di elementi che memorizza è generalmente inferiore al numero di elementi memorizzati in ALTSIG. 
 
 
-\subsubsection{Algoritmo di MALVA}
+\subsubsection{Algoritmo}
 
 L'algoritmo utilizza la definizione di \textit{signature} di un allele e la sua frequenza per rilevare la sua presenza in un individuo (nelle read) senza effettuare l'allineamento delle read sul genoma di riferimento e chiamare il genotipo. Esso funziona supponendo che, dato un campione di read da un genoma, se un allele è incluso nel genoma, almeno una delle sue firme deve esistere come sottostringa in read multiple. 
 

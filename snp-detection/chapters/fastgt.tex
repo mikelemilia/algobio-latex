@@ -27,7 +27,7 @@ All'interno dell'ART si possono effettuare operazioni di ricerca, per controllar
 
 Il consumo di spazio dell'ART dipende dalla distribuzione delle chiavi: chiavi dense rappresentano il caso migliore e possono essere archiviate in modo efficiente, anche utilizzando un intervallo ampio e senza nodi adattivi. Quando invece le chiavi sono sparse, molti puntatori di nodi interni sono nulli, il che si traduce in uno spazio sprecato. I nodi adattivi risolvono questi problemi e assicurano che qualsiasi distribuzione delle chiavi venga archiviata in modo compatto, ottimizzando localmente il consumo di spazio in ciascun nodo. Nel caso peggiore, tenendo conto dei nodi adattivi, della lenta espansione e della compressione del percorso, lo spazio occupato dai nodi dipende dalla loro tipologia e dal numero di figli.
 
-\subsubsection{Struttura Dati di FastGT}
+\subsubsection{Struttura Dati}
 \label{strutturaDatiFastGT}
 
 L'input di FastGT è costituito da un file FASTQ contenente i dati del genoma e da un database precompilato di varianti genomiche e corrispondenti coppie di \textit{k}-mer che si sovrappongono a ciascuna variante. Ogni posizione bi-allelica del SNV nel genoma è coperta da \textit{k} coppie di \textit{k}-mer, dove la coppia è formata da \textit{k}-mer corrispondenti a due alleli alternati: si presuppone che almeno un numero di queste siano uniche e appaiano esclusivamente in una posizione del genoma; pertanto, i conteggi di occorrenze di queste coppie di \textit{k}-mer uniche nei dati di sequenziamento possono essere utilizzati per identificare il genotipo di questa variante in un individuo specifico. Sebbene una coppia di \textit{k}-mer sia teoricamente sufficiente per la genotipizzazione, le mutazioni occasionalmente cambiano la sequenza del genoma nelle vicinanze di un SNV, impedendone il rilevamento, rischiando di far dedurre il genotipo sbagliato: si utilizzano quindi fino a tre coppie di \textit{k}-mer per variante per prevenire chiamate errate causate da perdite occasionali di \textit{k}-mer a causa di rare mutazioni. FastGT utilizza una lunghezza \textit{k }= 25 dei \textit{k}-mer. \\
@@ -44,7 +44,7 @@ FastGT utilizza un Adaptive Radix Tree (vedi Sezione \ref{AdaptiveRadixTree}) pe
 \end{figure}
 
 
-\subsubsection{Algoritmo di FastGT}
+\subsubsection{Algoritmo}
 
 Il database delle varianti dei \textit{k}-mer univoci viene assemblato identificando tutte le possibili coppie di \textit{k}-mer per ogni variante, che poi vengono sottoposti a diversi passaggi di filtraggio. Le fasi di filtraggio rimuovono varianti per le quali non vengono osservati \textit{k}-mer unici e varianti che producono genotipi non canonici (non diploidi negli autosomi e non aploidi nei cromosomi X e Y maschili) in una serie di test sequenziati da individui. La procedura di filtraggio, che si può notare nella pipeline riportata in Figura \ref{fig:fastgt}, è la seguente:
 
