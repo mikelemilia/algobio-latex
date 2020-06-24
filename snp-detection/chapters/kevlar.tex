@@ -23,7 +23,7 @@ Count-Min Sketch è una struttura dati probabilistica simile a un Bloom Filter (
 
 \item[-] una funzione di Count che quando arriva un nuovo evento di tipo $i$, aggiorna lo Sketch come segue: per ogni riga $j$ della tabella, applica la funzione hash corrispondente per ottenere un indice di colonna $k = h_j (i)$. Quindi incrementa il valore in posizione $(j,k)$ di uno.
 
-\item[-] una funzione di Min che per ogni query allo Sketch che richiede il conteggio stimato di un evento di tipo $i$, ritorna il valore minimo nella tabella per $i$, ovvero: $$\hat{a}_i = \min_{j} count[\ j,\ h_j (i)\ ]$$
+\item[-] una funzione di Min che per ogni query allo Sketch che richiede il conteggio stimato di un evento $i$, ritorna il valore minimo nella tabella per $i$, ovvero: $$\hat{a}_i = \min_{j} count[\ j,\ h_j (i)\ ]$$ chiaramente per ogni evento $i$, esiste $a_i \leq \hat{a}_i$ che è la frequenza reale di $i$ nello stream. Inoltre la stima proposta, per costruzione dello Sketch, garantisce di ottenere $\hat{a}_i \leq a_i + \epsilon N$ con probabilità $1-\delta$, dove $N$ è il numero totale di elementi visti dallo stream.
 
 \end{itemize}
 
@@ -34,7 +34,7 @@ Nella figura \ref{fig:kevlar_pipeline} è riportato il workflow dell'algoritmo d
 \begin{figure}[h!]
 	\centering
   	\captionsetup{justification=centering}
-  	\includegraphics[scale=.27]{images/kevlar_pipeline.png}
+%  	\includegraphics[scale=.27]{images/kevlar_pipeline.png}
   	\caption{}
   	\label{fig:kevlar_pipeline}
 \end{figure}
