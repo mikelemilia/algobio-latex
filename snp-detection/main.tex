@@ -22,6 +22,7 @@
 \usepackage{amsthm} % used for definition/theorem/proof/corollary/lemma
 \usepackage{amsmath}
 \usepackage[nodayofweek]{datetime}
+\usepackage{fancyhdr}
 
 \usepackage{apacite}
 \bibliographystyle{apacite}
@@ -32,6 +33,14 @@
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definizione}[section]
+
+% Per fare gli header
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\thesection\quad}
+\lhead{Guides and tutorials}
+\cfoot{\thepage}
+
 
 \begin{document}
 
