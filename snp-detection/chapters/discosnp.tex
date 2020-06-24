@@ -56,7 +56,7 @@ Una bolla è una biforcazione chiusa di un cammino ed è causata da una singola 
 \end{figure}
 
 
-\subsubsection{Struttura dati di DiscoSnp\texttt{++}}
+\subsubsection{Struttura dati}
 \label{dBG_prob}
 
 DiscoSnp\texttt{++} basa la sua efficienza sulla struttura dati Minia \cite{chikhi2013space} che permette di costruire grafi di \textit{de Bruijn probabilistici}. Un grafo di \textit{de Bruijn} probabilistico è ottenuto inserendo tutti i nodi di un grafo di \textit{de Bruijn} all'interno di Bloom Filter (vedi sezione \ref{BloomFilter}) posti in cascata. All'interno di questa struttura dati, differentemente da un grafo di \textit{Bruijn} classico, gli archi sono dedotti implicitamente dalle interrogazioni fatte ai Bloom Filter per l'appartenenza di tutte le possibili estensioni di un \textit{k}-mer e non necessitano di essere memorizzati. In particolare, un'estensione di un \textit{k}-mer \textit{v} è la concatenazione o (1) di un suffisso di lunghezza $k-1$ di \textit{v} con uno dei quattro possibili nucleotidi o (2) di uno dei quattro nucleotidi con il prefisso di lunghezza $k-1$ di \textit{v}. Un grafo di \textit{de Bruijn} probabilistico rappresenta un'approssimazione eccessiva del grafo originale e per questo è possibile che, interrogando il Bloom Filter sull'esistenza o meno di un arbitrario nodo del grafo, si ottenga come risposta un elemento falso positivo (ma mai un falso negativo), perciò questa sovra-approssimazione può introdurre delle diramazioni false tra i nodi originali del grafo e i nodi falsi positivi.
@@ -65,7 +65,7 @@ DiscoSnp\texttt{++} basa la sua efficienza sulla struttura dati Minia \cite{chik
 
 \subparagraph{Osservazione} Sia $S$ l'insieme dei nodi falsi positivi, ed $E$ l'insieme delle estensioni dei nodi da $S$, assumendo che il grafo venga attraversato iniziando da un nodo in $S$, i falsi positivi che non appartengono a $E$ non verranno mai interrogati. Perciò, l'insieme \textit{cFP} sarà un sotto-insieme di $E$. Sia $P$ l'insieme di tutti gli elementi di $E$ per il quale il Bloom Filter risponde \textit{si}. Allora l'insieme \textit{cFP} dei falsi positivi critici è formalmente definito come $cFP = P \setminus S$.
 
-\subsubsection{Algoritmo di DiscoSnp\texttt{++}}
+\subsubsection{Algoritmo}
 Gli algoritmi presenti all'interno dei moduli di \textsc{DiscoSnp} (\textsc{KisSnp2} e \textsc{KissReads}) sono stati stati rivisitati per ottenere un miglior filtraggio degli errori di sequenziamento in modo da individuare nuove mutazioni (SNP), come analizzeremo in seguito.\\
 
 \noindent

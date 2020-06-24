@@ -24,6 +24,8 @@
 \usepackage[nodayofweek]{datetime}
 \usepackage{fancyhdr}
 
+\renewcommand{\headrulewidth}{0pt}
+
 \usepackage{apacite}
 \bibliographystyle{apacite}
 \usepackage{etoolbox}
@@ -36,10 +38,11 @@
 
 % Per fare gli header
 \pagestyle{fancy}
-\fancyhf{}
-\rhead{\thesection\quad}
-\lhead{Guides and tutorials}
-\cfoot{\thepage}
+%\fancyhf{}
+%\rhead{\headings}
+%\rhead{\thesection\quad}
+%\lhead{Guides and tutorials}
+%\cfoot{\thepage}
 
 
 \begin{document}
@@ -115,6 +118,7 @@
 \subfile{chapters/conclusioni.tex} 				% Conclusioni
 
 \newpage
+\thispagestyle{empty} 
 \bibliography{bibliography} 					% Bibliografia
 
 
