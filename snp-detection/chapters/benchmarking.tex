@@ -11,7 +11,7 @@
 
 In questa sezione faremo alcune considerazioni rispetto alle prestazioni dei framework analizzati nella sezione precedente e in particolare, ove possibile, essi verranno direttamente confrontati fra loro: non disponiamo, purtroppo, di molti confronti diretti poiché gli autori dei diversi paper presentano maggiormente confronti con tool \textit{alignment-based} ed, inoltre, quando sono presenti confronti tra tool \textit{alignment-free}, spesso si basano su dataset che permettono di mettere in luce le buone qualità del framework presentato nel paper. Abbiamo già sottolineato varie volte, che, in generale, i metodi \textit{alignment-free} sono in grado di ottenere prestazioni temporali molto inferiori ai metodi che si basano sull'allineamento, velocizzando il processo di genotipizzazione; questo, in alcuni casi, può avere alcuni effetti negativi, come l'aumento di memoria necessaria per eseguire la genotipizzazione, ma in generale, gli attuali framework \textit{alignment-free} sono competitivi e ottengono prestazioni confrontabili e in alcuni casi anche migliori dei metodi che utilizzano l'allineamento, rispetto ad accuratezza, precisione e richiamo. 
 
-Discuteremo ed effettueremo, \textcolor{red}{nelle seguenti sezioni,} delle analisi sui singoli framework e proporremo alcuni confronti e osservazioni.
+Discuteremo ed effettueremo, nei seguenti paragrafi, delle analisi sui singoli framework e proporremo alcuni confronti e osservazioni.
 
 \subsection{Analisi}
 
@@ -59,7 +59,24 @@ Le suddette simulazioni, e di conseguenza la precisione di Kevlar, sono state co
 
 L'analisi verrà suddivisa in capacità di predire correttamente SNV e indel di dimensioni variabili. Inizialmente con una \textit{coverage} bassa (10x) entrambi i framework producono una chiamata degli SNV molto scarsa e in generale soffrono di bassa sensibilità (non prevedendo molte varianti vere) e di scarsa specificità (prevedendo molte varianti false), d'altro canto rispetto alla predizione degli indel DiscoSNP\texttt{++} risulta essere il più preciso ottenendo chiamate migliori per indel corti ($\sim 33\%$) con alta specificità. La capacità di Kevlar di rilevare accuratamente indels diventa evidente con una \textit{coverage} di 20x, infatti supera DiscoSNP\texttt{++} (che si stabilizza a ($\sim 50\%$) ottenendo una buona sensibilità nell'individuazione di SNV e indel ($\sim 75-78\%$) ma una discreta specificità solo per indel $>$100bp. 
 
-A livelli di \textit{coverage} più elevati (30x, 50x), Kevlar raggiunge costantemente le massime prestazioni in tutti i tipi di variante. In particolare, recupera più del $90\%$ delle varianti vere mentre facendo pochissime previsioni false su tutti i tipi di variante. DiscoSNP\texttt{++} d'altro canto non presenta notevoli miglioramenti prestazionali all'aumentare della \textit{coverage}.
+A livelli di \textit{coverage} più elevati (30x, 50x), Kevlar raggiunge costantemente le massime prestazioni in tutti i tipi di variante. In particolare, recupera più del $90\%$ delle varianti vere mentre facendo pochissime previsioni false su tutti i tipi di variante. DiscoSNP\texttt{++} d'altro canto non presenta notevoli miglioramenti prestazionali all'aumentare della \textit{coverage}, come si può osservare dalle Figure \ref{fig:kd10} e \ref{fig:kd50}.
+
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+	  \centering
+	  \includegraphics[width=\linewidth]{images/confronto_kevlar_disco_10.png}
+	  \caption{}
+	  \label{fig:kd10}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+	  \centering
+	  \includegraphics[width=\linewidth]{images/confronto_kevlar_disco_50.png}
+	  \caption{}	  
+	  \label{fig:kd50}
+	\end{subfigure}
+	\caption{Confronto tra Kevlar e DiscoSNP++. In figura (a) i test con coverage 10x, in figura (b) i test con coverage 50x.}
+\end{figure}
 
 \subsubsection{Malva, VarGeno e DiscoSNP\texttt{++}}
 
@@ -72,23 +89,40 @@ Il test, che confronta direttamente questi tre metodi e altri due \textit{alignm
 
 Ogni metodo è stato valutato in termini di accuratezza ed efficienza (tempo e memoria) della chiamata delle varianti. Le due seguenti Figure \ref{fig:confronto1} e \ref{fig:confronto2} rappresentano graficamente le prestazioni ottenute.
 
+%\begin{figure}[h!]
+%\centering
+%\begin{minipage}{.5\textwidth}
+%  \centering
+%  \captionsetup{justification=centering}
+%  \vspace*{0,9cm}
+%  \includegraphics[scale=.39]{images/confronto1.png}
+%  \captionof{figure}{Tempo di esecuzione e utilizzo della memoria rispetto all'intero dataset \texttt{FullGenome}(FG, prima colonna) e a \texttt{HalfGenome}(HG, seconda colonna).}
+%  \label{fig:confronto1}
+%\end{minipage}%
+%\begin{minipage}{.5\textwidth}
+%  \centering
+%  \captionsetup{justification=centering}
+%  \includegraphics[scale=.50]{images/confronto2.png}
+%  \captionof{figure}{Rappresentazione qualitativa dell'accurancy rispetto a \texttt{HalfGenome} dataset.}
+%  \label{fig:confronto2}
+%\end{minipage}
+%\end{figure}
+
 \begin{figure}[h!]
-\centering
-\begin{minipage}{.5\textwidth}
-  \centering
-  \captionsetup{justification=centering}
-  \vspace*{0,9cm}
-  \includegraphics[scale=.39]{images/confronto1.png}
-  \captionof{figure}{Tempo di esecuzione e utilizzo della memoria rispetto all'intero dataset \texttt{FullGenome}(FG, prima colonna) e a \texttt{HalfGenome}(HG, seconda colonna).}
-  \label{fig:confronto1}
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-  \centering
-  \captionsetup{justification=centering}
-  \includegraphics[scale=.50]{images/confronto2.png}
-  \captionof{figure}{Rappresentazione qualitativa dell'accurancy rispetto a \texttt{HalfGenome} dataset.}
-  \label{fig:confronto2}
-\end{minipage}
+	\centering
+	\begin{subfigure}{.5\textwidth}
+	  \centering
+	  \includegraphics[width=\linewidth]{images/confronto1.png}
+	  \caption{}
+	  \label{fig:confronto1}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+	  \centering
+	  \includegraphics[width=\linewidth]{images/confronto2.png}
+	  \caption{}	  
+	  \label{fig:confronto2}
+	\end{subfigure}
+	\caption{(a) Tempo di esecuzione e utilizzo della memoria rispetto all'intero dataset \texttt{FullGenome}(FG, prima colonna) e a \texttt{HalfGenome}(HG, seconda colonna). (b) Rappresentazione qualitativa dell'accurancy rispetto a \texttt{HalfGenome} dataset.}
 \end{figure}
 
 \noindent
