@@ -53,7 +53,7 @@ Sono inoltre state misurate le prestazioni relative alla scoperta SNV \textit{de
 
 \subsubsection{VarGeno e LAVA}
 
-Nella Sezione \ref{vargeno} è stato presentato il framework Vargeno come un diretto miglioramento del precedente metodo LAVA: già quest'ultimo ottiene migliori prestazioni rispetto agli altri algoritmi standard, perciò nei test di \cite{sun-medvedev2018vargeno} Vargeno, che è 7-13 volte più veloce di LAVA , ha un tempo molto inferiore ai più comuni algoritmi basati sull'allineamento delle read (circa 62 volte più veloce dell'algoritmo BWA+mpileup). 
+Nella Sezione \ref{vargeno} è stato presentato il framework Vargeno come un diretto miglioramento del precedente metodo LAVA: già quest'ultimo ottiene migliori prestazioni rispetto agli altri algoritmi standard, perciò nei test di \cite{sun-medvedev2018vargeno} Vargeno, che è 7-13 volte più veloce di LAVA, ha un tempo molto inferiore ai più comuni algoritmi basati sull'allineamento delle read (circa 62 volte più veloce dell'algoritmo BWA+mpileup). 
 
 Il punto debole di Vargeno è la memoria necessaria, che è elevata e richiesta per mantenere gli indici creati. VarGeno infatti ha richiesto circa 44/60 GB nei diversi esperimenti, a seconda della lista; la versione lite, VarGeno \textit{Lite}, è in grado di diminuire la memoria usata (ridotta del 44\%/64\%) poiché, invece di includere ogni \textit{k}-mer del genoma di riferimento nell'indice, vengono inseriti solo i \textit{k}-mer che si trovano all'interno di un intervallo di lunghezza di una read di un SNP nella lista SNP. 
 
